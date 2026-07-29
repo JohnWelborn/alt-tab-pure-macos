@@ -148,7 +148,6 @@ final class QAMenu: NSPanel {
     private static func mockFreshInstall() {
         UserDefaults.standard.removePersistentDomain(forName: App.bundleIdentifier)
         UserDefaults.standard.removePersistentDomain(forName: LicenseManager.defaultsSuiteName)
-        UserDefaults.standard.removePersistentDomain(forName: "\(App.bundleIdentifier).usage")
         SystemKeychain(service: LicenseManager.keychainService).removeAll()
     }
 

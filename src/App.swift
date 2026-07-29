@@ -95,7 +95,6 @@ class App: NSApplication {
         // macOS 26.6.2. Behind the focus request rather than in front of it: the tap's callback already
         // passes Esc through once `SwitcherSession.isActive` is false, so nothing absorbs a key in the gap.
         KeyboardEvents.updateEscapeAbsorptionTap() // session closed: stop tapping keyDown (#5766)
-        UsageStats.resetSession()
         TilesView.endSearchSession()
         ContextMenuEvents.toggle(false)
         CursorEvents.toggle(false)
@@ -346,7 +345,6 @@ class App: NSApplication {
         }()
         session.forceDoNothingOnRelease = forceDoNothingOnRelease_
         Logger.debug { "isFirstSummon:\(session.isFirstSummon) shortcutIndex:\(shortcutIndex)" }
-        UsageStats.recordTrigger(shortcutIndex)
         if session.isFirstSummon || shortcutIndex != session.shortcutIndex {
             NSScreen.updatePreferred()
             let isLaunchSummon = isVeryFirstSummon
@@ -517,7 +515,6 @@ class App: NSApplication {
         if QAMenu.openSettingsOnLaunch { App.showSettingsWindow() }
         if QAMenu.graphEnabled { DebugMenu.setEnabled(true) }
         #endif
-        UsageStats.prune()
         ProTransitionManager.shared.onAction = { ProPromptHost.shared.dispatch($0) }
         ProTransitionManager.shared.onAppLaunchComplete()
         Logger.info { "Finished launching AltTab" }
@@ -624,8 +621,6 @@ extension App: NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         // symbolic hotkeys state persist after the app is quit; we restore this shortcut before quitting
         setNativeCommandTabEnabled(true)
-        // usage counters are appended in memory and written back on a debounce; land the pending ones
-        UsageStats.flushNow()
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {

@@ -4,22 +4,19 @@ class Day15FullUpgradeWindow: ProPromptWindow {
     static var shared: Day15FullUpgradeWindow?
 
     private var header: ProPromptHeader!
-    private var hero: UsageStatHeroView!
+    private var supportingLine: NSTextField!
 
     static func show(for reason: HardGateReason? = nil) {
         if shared == nil { shared = Day15FullUpgradeWindow() }
         shared!.header.title = (reason?.resolved ?? .nonEngaged).unlockHeader
-        shared!.hero.supportingLine = supportingLine(for: reason)
-        // The singleton is reused across re-shows; refresh so the cumulative trigger /
-        // Pro-use numbers track usage growth instead of staying frozen at first-render.
-        shared!.hero.refresh()
+        shared!.supportingLine.stringValue = supportingLine(for: reason)
         shared!.fitContentHeight()
         App.showSecondaryWindow(shared!)
     }
 
     private static func supportingLine(for reason: HardGateReason?) -> String {
         let resolved = reason?.resolved ?? .nonEngaged
-        if resolved == .nonEngaged || UsageStats.usedProFeaturesSessionCount == 0 {
+        if resolved == .nonEngaged {
             return NSLocalizedString(
                 "AltTab Pro adds 4 features beyond the free switcher.",
                 comment: "")
@@ -48,15 +45,23 @@ class Day15FullUpgradeWindow: ProPromptWindow {
         self.init(size: NSSize(width: 440, height: 340))
         let header = ProPromptHeader(title: ResolvedReason.nonEngaged.unlockHeader, size: .large)
         self.header = header
-        let hero = UsageStatHeroView(supportingLine: Self.supportingLine(for: nil))
-        self.hero = hero
+        let supportingLine = Self.makeSupportingLine(Self.supportingLine(for: nil))
+        self.supportingLine = supportingLine
         let continueLink = NotAdvisedButton(NSLocalizedString("Continue with Free", comment: ""))
         continueLink.onAction = { [weak self] _ in self?.close() }
         setHeroContentView(
             header: header,
-            hero: hero,
+            hero: supportingLine,
             purchase: ProPromptButtons.makeGetPro(large: true) { ProTransitionManager.openCheckout() },
             dismiss: continueLink,
             sidePadding: 30, gap: 24, dismissGap: 12)
+    }
+
+    private static func makeSupportingLine(_ text: String) -> NSTextField {
+        let label = NSTextField(wrappingLabelWithString: text)
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = .secondaryLabelColor
+        label.alignment = .center
+        return label
     }
 }
