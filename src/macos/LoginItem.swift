@@ -2,7 +2,7 @@ import Cocoa
 
 /// Owns the `startAtLogin` preference's side effect: writing / removing the app's launchd plist
 /// under `~/Library/LaunchAgents`. Extracted from `PreferencesEvents` so launchd-plist plumbing
-/// isn't mixed with menubar/Sparkle/trackpad side effects.
+/// isn't mixed with menubar/trackpad side effects.
 ///
 /// docs: https://developer.apple.com/library/archive/technotes/tn2083/_index.html#//apple_ref/doc/uid/DTS10003794-CH1-SECTION23
 /// docs: man launchd.plist

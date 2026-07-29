@@ -33,7 +33,7 @@ class LicenseManager {
     let defaults: UserDefaults
 
     /// Called whenever `state` changes (including the initial `initialize()` assignment).
-    /// Production wires this up in App.swift to refresh Menubar, sync Sparkle cookie, and notify ProTransitionManager.
+    /// Production wires this up in App.swift to refresh Menubar and notify ProTransitionManager.
     /// Tests leave it unset to avoid side effects.
     var onStateChanged: ((LicenseState) -> Void)?
 

@@ -2,7 +2,6 @@ import Cocoa
 import Darwin
 import ShortcutRecorder
 import AppCenterCrashes
-import Sparkle
 
 class App: AppCenterApplication {
     /// Held for the process lifetime. `static let` is lazy, so `init` has to touch it or App Nap is never
@@ -37,8 +36,6 @@ class App: AppCenterApplication {
     /// that keeps the crash handler alive for the process lifetime.
     // periphery:ignore
     private static var appCenterDelegate: AppCenterCrash?
-    static var sparkleDelegate: SparkleDelegate?
-    static var updaterController: SPUStandardUpdaterController?
     // don't queue multiple delayed rebuildUi() calls
     private static var delayedDisplayScheduled = 0
     private static let switcherUiRepaintCoalescer = RepaintCoalescer()
@@ -130,11 +127,6 @@ class App: AppCenterApplication {
         focusSelectedWindow(selectedWindow)
     }
 
-    @objc static func checkForUpdatesNow(_ sender: NSMenuItem) {
-        GeneralTab.checkForUpdatesNow(sender)
-    }
-
-    // periphery:ignore:parameters sender - NSMenuItem target/action signature
     @objc static func checkPermissions(_ sender: NSMenuItem) {
         showPermissionsWindow()
     }
@@ -154,8 +146,6 @@ class App: AppCenterApplication {
     @objc static func showFeedbackPanel() {
         let wasFresh = FeedbackWindow.shared == nil
         initializeFeedbackWindowIfNeeded()
-        // Fresh init already runs reset(); skip the redundant second call so we don't
-        // double-fire the Sparkle preflight on the first ever open.
         if !wasFresh { FeedbackWindow.shared?.reset() }
         showSecondaryWindow(FeedbackWindow.shared!)
     }
@@ -521,18 +511,6 @@ class App: AppCenterApplication {
         // Needs the AX runloop `BackgroundWork.start()` created, so it cannot go with the launch-time setup.
         AxObserverRegistry.shared.startRecoveryTicks()
         CliEvents.observe()
-        App.sparkleDelegate = SparkleDelegate()
-        App.updaterController = SPUStandardUpdaterController(
-            startingUpdater: false,
-            updaterDelegate: App.sparkleDelegate!,
-            userDriverDelegate: nil)
-        #if DEBUG
-        if !Preferences.qaPristine {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 30) { App.updaterController?.startUpdater() }
-        }
-        #else
-        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { App.updaterController?.startUpdater() }
-        #endif
         PreferencesEvents.initialize()
         BenchmarkRunner.startIfNeeded()
         showSettingsWindowOnFirstLaunchIfNeeded()
@@ -599,7 +577,6 @@ extension App: NSApplicationDelegate {
         LicenseManager.shared.onStateChanged = { state in
             Menubar.refreshLicenseMenuItems()
             if !LicenseManager.shared.isMocked {
-                syncLicenseCookie(state: state)
                 ProTransitionManager.shared.onLicenseStateChanged()
             }
             UpgradeTab.refreshStatus()

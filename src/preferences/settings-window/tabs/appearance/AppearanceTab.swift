@@ -28,10 +28,10 @@ class IllustratedImageThemeView: ClickHoverImageView {
     /// bitmap cache is also disabled. Lets ARC reclaim the bitmap when no view holds the image.
     ///
     /// The bundled file is deterministic, but the *load* isn't: the bundle lookup and the file open
-    /// both touch the filesystem and can fail transiently (Sparkle swapping the `.app` mid-update,
-    /// app-translocation I/O hiccups, file-descriptor exhaustion). A crash report (SIGTRAP on the
-    /// force-unwrap this used to feed) proved it happens in the wild, so we retry once: a one-off
-    /// blip resolves to the real image rather than nil.
+    /// both touch the filesystem and can fail transiently (app-translocation I/O hiccups,
+    /// file-descriptor exhaustion). A crash report (SIGTRAP on the force-unwrap this used to feed)
+    /// proved it happens in the wild, so we retry once: a one-off blip resolves to the real image
+    /// rather than nil.
     static func loadIllustration(_ name: String) -> NSImage? {
         guard let path = Bundle.main.path(forResource: "\(name)@2x", ofType: "heic") else {
             Logger.error { "illustration missing from bundle: \(name)" }

@@ -31,7 +31,7 @@ We minimize reliance on XCode, InterfaceBuilder, Playground, and other GUI tools
 
 * `alt-tab-macos.xcodeproj` file describing AltTab itself. It contains some settings for the app
 * `alt_tab_macos.entitlements` and `Info.plist` which are static files describing some app config for XCode
-* `vendor/` holds vendored open-source libraries (Sparkle, ShortcutRecorder, AppCenter) as local SPM packages. `vendor/scripts/update_*.sh` refresh them from upstream
+* `vendor/` holds vendored open-source libraries as local SPM packages. `vendor/scripts/update_*.sh` refreshes them from upstream
 * Some `.xcconfig` files in `config/` which contain XCode settings that people typically change using XCode UI, but that I want to be version controlled
 
 The project directory is organized in the following way:
@@ -59,7 +59,7 @@ The `src/` folder groups files by feature, so files that change together live to
 | `src/kit/`              | reusable AppKit building blocks (custom buttons, views, controls) |
 | `src/util/`             | generic helpers (background work, throttling, scheduling policy) |
 | `src/api/`              | client for our backend (license and feedback endpoints) |
-| `src/vendors/`          | glue code for vendored libraries (AppCenter, Sparkle, ObjC exception catcher) |
+| `src/vendors/`          | Objective-C exception catcher |
 | `src/debug/`            | benchmarking and QA tooling |
 | `src/_test-support/`    | mocks and helpers shared by the unit tests |
 
