@@ -55,10 +55,5 @@
 		</dict>
 	</array>
 
-	<!-- ===== Build-time secrets (substituted from xcconfig; override per-dev via config/local.xcconfig) ===== -->
-	<key>Domain</key>
-	<string>$(DOMAIN)</string>
-	<key>ApiDomain</key>
-	<string>$(API_DOMAIN)</string>
 </dict>
 </plist>

@@ -50,7 +50,6 @@ jobs:
       - run: scripts/run_tests.sh
       - run: scripts/build_app.sh
       - run: scripts/package_and_notarize_release.sh
-      - run: scripts/update_readme_and_website.sh
       - run: npx semantic-release
       - id: set_release_info
         run: scripts/extract_latest_changelog.sh
@@ -62,6 +61,3 @@ jobs:
           # uploading the zips in parallel makes github's asset backend fail one of
           # them at random with "Error creating asset temp dir"
           preserve_order: true
-      - run: scripts/update_website.sh
-        env:
-          GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
