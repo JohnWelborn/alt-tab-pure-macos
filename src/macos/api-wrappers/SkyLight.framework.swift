@@ -4,6 +4,7 @@
  Location: Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/PrivateFrameworks/SkyLight.framework
  */
 
+import Cocoa
 import Darwin // dlopen/dlsym for SLSWindowIteratorGetBounds' C-ABI binding (see below)
 
 let CGS_CONNECTION = CGSMainConnectionID()

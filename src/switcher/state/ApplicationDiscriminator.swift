@@ -1,3 +1,5 @@
+import Carbon.HIToolbox
+
 class ApplicationDiscriminator {
     static func isActualApplication(_ processIdentifier: pid_t, _ bundleIdentifier: String?,
                                     evidence: ApplicationAdmissionEvidence = .discovery) -> Bool {
