@@ -1,3 +1,5 @@
+import Cocoa
+
 protocol EffectView: NSView {
     func updateAppearance()
     /// Where `TilesView` places its content (scroll view, search field, empty-state label).

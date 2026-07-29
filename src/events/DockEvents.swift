@@ -1,4 +1,5 @@
 import Foundation
+import ApplicationServices
 
 class DockEvents {
     private static var axObserver: AXObserver?
