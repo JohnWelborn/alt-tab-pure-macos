@@ -26,10 +26,6 @@ the Edit menu, call `App.cycleSelection`).
 - **Escape is contextual** (the headline interaction): if search was *toggled mid-session*, Escape
   exits search back to the normal switcher (a second Escape then closes it). If the session *started
   in search*, Escape closes the whole switcher immediately — there's no "normal switcher" to fall back to.
-- **Pro gating timing**: the caller evaluates `ProFeature.searchInSwitcher.attemptUse()` at the real
-  attempt moment and passes a `Bool` in. The gate is checked **before** the state branches, so a denied attempt never mutates mode
-  (it returns `.proGateBlocked`). `toggle` is gate-free — it just routes to the enter/disable path,
-  which applies its own gate (mirrors the original delegation).
 - **Entering editing refreshes the UI** (`enterEditing` is only reached from `.off`).
 - **Key routing precedence** (while editing): IME-composing or an open context menu wins first (never
   steal composing keystrokes) → arrows drive selection → Tab is swallowed → a matched when-active
@@ -73,10 +69,9 @@ Mirrors `SearchModeResolverTests.swift` 1:1.
 - **testToggleFromOffEntersEditing** — `.off` → `.enterEditing`.
 - **testToggleFromEditingDisables** — `.editing` → `.disable`.
 
-### C. Enter editing (Pro-gated)
-- **testEnterFromOffEntersEditing** — `.off` + entitled → `.enterEditing`.
-- **testEnterWhenAlreadyEditingJustPlacesCaret** — `.editing` + entitled → `placeCaretOnly`.
-- **testEnterBlockedWhenSearchNotEntitled** — not entitled (gate checked before state branch) → `.proGateBlocked`.
+### C. Enter editing
+- **testEnterFromOffEntersEditing** — `.off` → `.enterEditing`.
+- **testEnterWhenAlreadyEditingJustPlacesCaret** — `.editing` → `placeCaretOnly`.
 
 ### D. Disable
 - **testDisableFromEditingExitsToOff** — `.editing` → `.exitToOff`.
