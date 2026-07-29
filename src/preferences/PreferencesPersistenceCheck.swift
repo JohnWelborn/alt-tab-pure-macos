@@ -9,10 +9,9 @@ import AppKit
 /// flag couldn't persist anyway, since persistence is exactly what's broken).
 enum PreferencesPersistenceCheck {
     /// Every suite AltTab persists to. `UserDefaults.standard` is keyed by the bundle id; the others are
-    /// explicit suite (license/Pro-transition state). System suites we only read (e.g.
-    /// `com.apple.Finder`) are out of scope.
+    /// System suites we only read (e.g. `com.apple.Finder`) are out of scope.
     static func suiteNames() -> [String] {
-        [App.bundleIdentifier, LicenseManager.defaultsSuiteName]
+        [App.bundleIdentifier]
     }
 
     /// Entry point, called early from `applicationDidFinishLaunching`. Probes off-main; the (rare) alert

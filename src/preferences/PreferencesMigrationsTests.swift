@@ -16,6 +16,8 @@ final class PreferencesMigrationsTests: XCTestCase {
     var suiteName: String!
     var legacyDefaults: UserDefaults!
     var legacySuiteName: String!
+    var legacyEntitlementDefaults: UserDefaults!
+    var legacyEntitlementSuiteName: String!
     var launchAgentsDirectory: URL!
 
     override func setUp() {
@@ -24,11 +26,14 @@ final class PreferencesMigrationsTests: XCTestCase {
         defaults = TestDefaults.make(suiteName)
         legacySuiteName = "com.lwouis.alt-tab-macos.tests.legacy-migrations"
         legacyDefaults = TestDefaults.make(legacySuiteName)
+        legacyEntitlementSuiteName = "com.lwouis.alt-tab-macos.tests.legacy-entitlements"
+        legacyEntitlementDefaults = TestDefaults.make(legacyEntitlementSuiteName)
         launchAgentsDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         try! FileManager.default.createDirectory(at: launchAgentsDirectory, withIntermediateDirectories: true)
         PreferencesMigrations.defaults = defaults
         PreferencesMigrations.legacyDefaults = legacyDefaults
         PreferencesMigrations.legacyDefaultsDomainName = legacySuiteName
+        PreferencesMigrations.legacyLicenseDefaults = legacyEntitlementDefaults
         PreferencesMigrations.launchAgentsDirectory = launchAgentsDirectory
     }
 
@@ -37,8 +42,10 @@ final class PreferencesMigrationsTests: XCTestCase {
         TestDefaults.tearDown(defaults, suiteName)
         PreferencesMigrations.legacyDefaults = UserDefaults(suiteName: "com.lwouis.alt-tab-macos")!
         PreferencesMigrations.legacyDefaultsDomainName = "com.lwouis.alt-tab-macos"
+        PreferencesMigrations.legacyLicenseDefaults = UserDefaults(suiteName: "com.lwouis.alt-tab-macos.license")!
         PreferencesMigrations.launchAgentsDirectory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents", isDirectory: true)
         TestDefaults.tearDown(legacyDefaults, legacySuiteName)
+        TestDefaults.tearDown(legacyEntitlementDefaults, legacyEntitlementSuiteName)
         try? FileManager.default.removeItem(at: launchAgentsDirectory)
         super.tearDown()
     }
@@ -80,6 +87,36 @@ final class PreferencesMigrationsTests: XCTestCase {
         PreferencesMigrations.migrateLegacyBundleIdentifier()
 
         XCTAssertEqual(defaults.string(forKey: "customValue"), "first")
+    }
+
+    func testRestoresLockedLegacySnapshotWithoutDeletingIt() {
+        defaults.set("0", forKey: "appearanceStyle")
+        legacyEntitlementDefaults.set(1, forKey: "proTransition.rememberedAppearanceStyle")
+
+        PreferencesMigrations.restoreLegacyProSnapshots()
+
+        XCTAssertEqual(defaults.string(forKey: "appearanceStyle"), "1")
+        XCTAssertEqual(legacyEntitlementDefaults.object(forKey: "proTransition.rememberedAppearanceStyle") as? Int, 1)
+    }
+
+    func testDoesNotOverwriteAChangedPreferenceWithLegacySnapshot() {
+        defaults.set("2", forKey: "appearanceStyle")
+        legacyEntitlementDefaults.set(1, forKey: "proTransition.rememberedAppearanceStyle")
+
+        PreferencesMigrations.restoreLegacyProSnapshots()
+
+        XCTAssertEqual(defaults.string(forKey: "appearanceStyle"), "2")
+    }
+
+    func testLegacySnapshotsMigrationIsIdempotent() {
+        defaults.set("0", forKey: "appearanceStyle")
+        legacyEntitlementDefaults.set(1, forKey: "proTransition.rememberedAppearanceStyle")
+        PreferencesMigrations.restoreLegacyProSnapshots()
+        defaults.set("0", forKey: "appearanceStyle")
+
+        PreferencesMigrations.restoreLegacyProSnapshots()
+
+        XCTAssertEqual(defaults.string(forKey: "appearanceStyle"), "0")
     }
 
     // MARK: - A. Version gating (shouldRun)
@@ -402,11 +439,11 @@ extension App {
     static let version = "99.99.99"
 }
 
-enum ProTransitionState {
-    static func removeLegacyPromptState() {}
+enum AxError: Error {
+    case runtimeError
 }
 
-// Preferences encoding surface used by the migrations
+// Preferences codec surface used by the migrations
 
 extension Preferences {
     /// Faithful: same JSONEncoder default behavior as production, so exceptions migrations are tested for real.

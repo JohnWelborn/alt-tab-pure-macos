@@ -4,14 +4,11 @@ import Cocoa
 final class QAMenu: NSPanel {
     static var shared: QAMenu?
     private let stack = NSStackView()
-    private let proSectionContent = NSStackView()
-    private var proDisclosure: NSButton!
     private let corruptedSectionContent = NSStackView()
     private var corruptedDisclosure: NSButton!
 
     private static let autosaveName = "QAMenu"
     private static let openSettingsOnLaunchKey = "debug.openSettingsOnLaunch"
-    private static let proSectionExpandedKey = "debug.proSectionExpanded"
     private static let corruptedSectionExpandedKey = "debug.corruptedSectionExpanded"
     private static let graphEnabledKey = "debug.graphEnabled"
     private static let sectionSpacing: CGFloat = 16
@@ -101,8 +98,8 @@ final class QAMenu: NSPanel {
         topRow.trailingAnchor.constraint(equalTo: stack.trailingAnchor, constant: -stack.edgeInsets.right).isActive = true
         stack.addArrangedSubview(graphCheckbox)
         stack.addArrangedSubview(langDropdown)
-        addProTransitionButtons()
         addCorruptedSettingsButtons()
+        addSearchHintButton()
     }
 
     private func addCorruptedSettingsButtons() {
@@ -143,79 +140,15 @@ final class QAMenu: NSPanel {
         corruptedSectionContent.addArrangedSubview(dialogRow)
     }
 
-    /// Wipe every UserDefaults suite the app uses plus every keychain entry under the license service,
-    /// so the next launch behaves exactly like a brand-new install.
-    private static func mockFreshInstall() {
-        UserDefaults.standard.removePersistentDomain(forName: App.bundleIdentifier)
-        UserDefaults.standard.removePersistentDomain(forName: LicenseManager.defaultsSuiteName)
-        SystemKeychain(service: LicenseManager.keychainService).removeAll()
-    }
-
-    private func addProTransitionButtons() {
-        let isExpanded = UserDefaults.standard.object(forKey: Self.proSectionExpandedKey) as? Bool ?? false
-        proDisclosure = NSButton(title: "", target: nil, action: nil)
-        proDisclosure.bezelStyle = .disclosure
-        proDisclosure.setButtonType(.pushOnPushOff)
-        proDisclosure.state = isExpanded ? .on : .off
-        proDisclosure.onAction = { [weak self] _ in
-            guard let self else { return }
-            let expanded = self.proDisclosure.state == .on
-            UserDefaults.standard.set(expanded, forKey: Self.proSectionExpandedKey)
-            self.proSectionContent.isHidden = !expanded
-            self.sizeToFitContent()
-        }
+    private func addSearchHintButton() {
         if let prior = stack.arrangedSubviews.last {
             stack.setCustomSpacing(Self.sectionSpacing, after: prior)
         }
-        let proHeader = NSStackView(views: [proDisclosure, sectionLabel("Pro Transition")])
-        proHeader.orientation = .horizontal
-        proHeader.spacing = 4
-        stack.addArrangedSubview(proHeader)
-        stack.setCustomSpacing(Self.sectionSpacing, after: proHeader)
-
-        proSectionContent.orientation = .vertical
-        proSectionContent.alignment = .leading
-        proSectionContent.spacing = 8
-        proSectionContent.isHidden = !isExpanded
-        stack.addArrangedSubview(proSectionContent)
-
-        proSectionContent.addArrangedSubview(sectionLabel("Mock Day:"))
-        let mockDayRow = NSStackView(views: [
-            makeButton("1") { Self.mockDay(1) },
-            makeButton("13") { Self.mockDay(13) },
-            makeButton("15 (expired)") { Self.mockDay(15) },
-            makeButton("21") { Self.mockDay(21) },
-            makeButton("35") { Self.mockDay(35) },
-            makeButton("Pro") { LicenseManager.shared.mockProUser() },
-        ])
-        mockDayRow.orientation = .horizontal
-        mockDayRow.spacing = 4
-        proSectionContent.addArrangedSubview(mockDayRow)
-        proSectionContent.setCustomSpacing(Self.sectionSpacing, after: mockDayRow)
-
         let searchHintButton = makeButton("Show search hint") { SearchDiscoveryHint.shared.showForQA() }
         searchHintButton.toolTip = "Show once on the next Alt-Tab. Hold Alt for one second."
-        proSectionContent.addArrangedSubview(searchHintButton)
-        proSectionContent.setCustomSpacing(Self.sectionSpacing, after: searchHintButton)
-
-
-        proSectionContent.addArrangedSubview(sectionLabel("Reset:"))
-        let resetRow = NSStackView(views: [
-            makeButton("Revalidate") { LicenseManager.shared.revalidateWithServer() },
-            makeButton("Mock fresh install") { Self.mockFreshInstall() },
-        ])
-        resetRow.orientation = .horizontal
-        resetRow.spacing = 4
-        proSectionContent.addArrangedSubview(resetRow)
+        stack.addArrangedSubview(searchHintButton)
     }
 
-    /// Mock passage of time to a specific day and refresh the locked-preference state.
-    private static func mockDay(_ day: Int) {
-        let mgr = ProTransitionManager.shared
-        mgr.resetAllState()
-        LicenseManager.shared.mockTrialDay(day)
-        Menubar.menubarIconCallback(nil)
-    }
 
     private func sectionLabel(_ text: String) -> NSTextField {
         let label = NSTextField(labelWithString: text)
