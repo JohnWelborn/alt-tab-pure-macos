@@ -10,7 +10,6 @@ version="$(cat "$VERSION_FILE")"
 # Upload a single .dSYM bundle to AppCenter (zip, request slot, PUT to blob, mark committed).
 # Called once per dSYM produced by the Release build:
 #   - AltTab.app.dSYM        host binary + everything statically linked (AppCenter, AppCenterCrashes, ShortcutRecorder)
-#   - Sparkle.framework.dSYM Sparkle is the only .dynamic SPM product, so it has its own dSYM
 # CrashReporter.xcframework ships without dSYMs (PLCrashReporter is binary-only); AppCenter has
 # server-side symbols for it.
 function upload_dsym() {
@@ -39,4 +38,3 @@ function upload_dsym() {
 
 cd "$XCODE_BUILD_PATH"
 upload_dsym "$APP_NAME.app.dSYM"
-upload_dsym "Sparkle.framework.dSYM"
