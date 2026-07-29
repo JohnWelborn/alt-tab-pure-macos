@@ -20,20 +20,11 @@ struct PreferenceDefinition<T: MacroPreference & CaseIterable & Equatable> {
     /// Read the currently-stored value, applying the gate if Pro is locked. The read passes
     /// through `CachedUserDefaults` so it's cheap on the hot path.
     ///
-    /// Three branches when locked:
-    /// 1. Free-pass session active and a remembered Pro index exists → return the remembered
-    ///    Pro selection so the switcher renders the user's Pro choice for one last session.
-    /// 2. Stored value is still a Pro value (transient, between lock and `onProLockEngaged()`) →
-    ///    return the free equivalent.
-    /// 3. Otherwise → return stored, which has been downgraded to the free equivalent already.
+    /// A transient stored Pro value is mapped to its free equivalent until the lock migration
+    /// persists that value.
     func read() -> T {
         let stored: T = CachedUserDefaults.macroPref(key, Array(T.allCases))
         guard let gate = gate, LicenseManager.shared.isProLocked else { return stored }
-        if ProTransitionManager.shared.isFreePassSessionActive,
-           let rememberedIdx = ProTransitionState.int(gate.rememberedKey),
-           Array(T.allCases).indices.contains(rememberedIdx) {
-            return Array(T.allCases)[rememberedIdx]
-        }
         if gate.isProValue(stored) {
             return gate.freeEquivalent
         }
@@ -42,8 +33,8 @@ struct PreferenceDefinition<T: MacroPreference & CaseIterable & Equatable> {
 
     /// If the stored value is currently a Pro selection, overwrite it with the free equivalent
     /// and return its original index — the caller persists this index under `gate.rememberedKey`
-    /// so the ghost UI signals the original choice and so a free-pass session can read it back
-    /// in `read()`. Returns nil if no gate, or if already at the free value.
+    /// so the ghost UI signals the original choice. Returns nil if no gate, or if already at the
+    /// free value.
     /// Notifies observers (so Settings rows re-render immediately on lock).
     func snapshotAndDowngrade() -> Int? {
         guard let gate = gate else { return nil }

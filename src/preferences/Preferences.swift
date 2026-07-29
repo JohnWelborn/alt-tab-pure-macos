@@ -155,6 +155,7 @@ class Preferences {
     static func initialize() {
         PreferencesMigrations.removeCorruptedPreferences()
         PreferencesMigrations.removeLegacyUsageStatistics()
+        PreferencesMigrations.removeLegacyProPromptState()
         PreferencesMigrations.migratePreferences()
         registerDefaults()
     }

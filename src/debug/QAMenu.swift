@@ -193,90 +193,26 @@ final class QAMenu: NSPanel {
         proSectionContent.addArrangedSubview(mockDayRow)
         proSectionContent.setCustomSpacing(Self.sectionSpacing, after: mockDayRow)
 
-        proSectionContent.addArrangedSubview(sectionLabel("Show window/popover for Day:"))
-
-        let showRow1 = NSStackView(views: [
-            makeButton("1 Welcome (new)") {
-                Day1WelcomeLetterWindow.shared?.close()
-                Day1WelcomeLetterWindow.shared = nil
-                Day1WelcomeLetterWindow.show(forceFreshInstall: true)
-            },
-            makeButton("1 Welcome (upgrade)") {
-                Day1WelcomeLetterWindow.shared?.close()
-                Day1WelcomeLetterWindow.shared = nil
-                Day1WelcomeLetterWindow.show(forceFreshInstall: false)
-            },
-            makeButton("4 Tour") { Day4TourPopover.show() },
-            makeButton("12 HeadsUp") { Day12HeadsUpPopover.show() },
-        ])
-        showRow1.orientation = .horizontal
-        showRow1.spacing = 4
-        proSectionContent.addArrangedSubview(showRow1)
-
-        let showRow2 = NSStackView(views: [
-            makeButton("15 FullUpgrade") { ProTransitionManager.shared.showFullUpgradeWindow() },
-            makeButton("15 Proactive") { ProTransitionManager.shared.showProactiveDay15Window() },
-            makeButton("15 HardGate") { Day15HardGatePopover.show() },
-        ])
-        showRow2.orientation = .horizontal
-        showRow2.spacing = 4
-        proSectionContent.addArrangedSubview(showRow2)
-
-        let showRow3 = NSStackView(views: [
-            makeButton("21 Reminder") { Day21ReminderPopover.show() },
-            makeButton("35 Final") { Day35FinalWindow.show() },
-        ])
-        showRow3.orientation = .horizontal
-        showRow3.spacing = 4
-        proSectionContent.addArrangedSubview(showRow3)
         let searchHintButton = makeButton("Show search hint") { SearchDiscoveryHint.shared.showForQA() }
         searchHintButton.toolTip = "Show once on the next Alt-Tab. Hold Alt for one second."
         proSectionContent.addArrangedSubview(searchHintButton)
         proSectionContent.setCustomSpacing(Self.sectionSpacing, after: searchHintButton)
 
-        proSectionContent.addArrangedSubview(sectionLabel("Reset:"))
-        let resetRow1 = NSStackView(views: [
-            makeButton("Free Pass") {
-                ProTransitionManager.shared.freePassUsed = false
-                Logger.debug { "freePassUsed reset to false" }
-            },
-            makeButton("Day4 Tour") {
-                ProTransitionManager.shared.hasSeenDay4Tour = false
-                Logger.debug { "hasSeenDay4Tour reset to false" }
-            },
-            makeButton("Switcher Trigger") {
-                ProTransitionManager.shared.hasTriggeredPostExpirationSwitcher = false
-                Logger.debug { "hasTriggeredPostExpirationSwitcher reset to false" }
-            },
-        ])
-        resetRow1.orientation = .horizontal
-        resetRow1.spacing = 4
-        proSectionContent.addArrangedSubview(resetRow1)
 
-        let resetRow2 = NSStackView(views: [
-            makeButton("Toggle Opt-Out") {
-                let mgr = ProTransitionManager.shared
-                mgr.userOptedOut = !mgr.userOptedOut
-                Logger.debug { "userOptedOut = \(mgr.userOptedOut)" }
-            },
+        proSectionContent.addArrangedSubview(sectionLabel("Reset:"))
+        let resetRow = NSStackView(views: [
             makeButton("Revalidate") { LicenseManager.shared.revalidateWithServer() },
             makeButton("Mock fresh install") { Self.mockFreshInstall() },
         ])
-        resetRow2.orientation = .horizontal
-        resetRow2.spacing = 4
-        proSectionContent.addArrangedSubview(resetRow2)
+        resetRow.orientation = .horizontal
+        resetRow.spacing = 4
+        proSectionContent.addArrangedSubview(resetRow)
     }
 
-    /// Mock passage of time to a specific day. Resets transition state and marks earlier prompts
-    /// as already seen so they don't re-fire. Mock Day 15 lands on the post-trial *grace* period
-    /// (trial expired, no Day15 window shown yet) so a tester can click `Day15 Proactive` or
-    /// `Day15 FullUpgrade` to exercise each path, then observe the locked state after.
+    /// Mock passage of time to a specific day and refresh the locked-preference state.
     private static func mockDay(_ day: Int) {
         let mgr = ProTransitionManager.shared
         mgr.resetAllState()
-        if day > 1 { mgr.hasSeenWelcome = true }
-        if day > 4 { mgr.hasSeenDay4Tour = true }
-        if day > 12 { mgr.hasSeenDay12 = true }
         LicenseManager.shared.mockTrialDay(day)
         Menubar.menubarIconCallback(nil)
     }

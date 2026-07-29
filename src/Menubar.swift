@@ -196,8 +196,6 @@ class Menubar {
         }
     }
 
-    private static var badgeDotLayer: CALayer?
-
     /// `NSStatusBar.system.thickness`: the status item working area, 22pt on every macOS so far
     /// (the visible menubar is taller since Tahoe, but items stay in a centred 22pt band).
     /// The artwork is authored at 44pt. Handed over at that size it makes the button 44pt tall,
@@ -216,37 +214,6 @@ class Menubar {
         statusItem.button!.image = image
         statusItem.isVisible = true
         statusItem.button!.imageScaling = .scaleProportionallyUpOrDown
-        updateBadgeDotOverlay()
-    }
-
-    // CALayer rather than NSView subview: adding an NSView to NSStatusBarButton triggers
-    // NSStatusBarContentView layout cascades that race with FBSScene updates at launch,
-    // tripping `_NSDetectedLayoutRecursion`. CALayers don't post frame-change notifications.
-    static private func updateBadgeDotOverlay() {
-        badgeDotLayer?.removeFromSuperlayer()
-        badgeDotLayer = nil
-        guard ProTransitionManager.shared.shouldShowBadgeDot, let button = statusItem?.button else { return }
-        button.wantsLayer = true
-        guard let buttonLayer = button.layer else { return }
-        let dotSize: CGFloat = 7
-        // Anchor to the icon's bottom-right corner (not the button bounds). The button is
-        // typically taller than the icon — especially on macOS Tahoe — so positioning relative
-        // to button.bounds leaves the dot in the empty space below the icon. `imageRect`
-        // returns the icon's actual rendered rect in NSView coords (y up).
-        let imageRect = button.cell?.imageRect(forBounds: button.bounds) ?? button.bounds
-        // CALayer uses y-down (origin top-left); imageRect is in NSView y-up. Convert the
-        // icon's bottom edge to layer space: `button.bounds.height - imageRect.minY`.
-        let dot = CALayer()
-        dot.frame = NSRect(
-            x: imageRect.maxX - dotSize,
-            y: button.bounds.height - imageRect.minY - dotSize,
-            width: dotSize, height: dotSize)
-        dot.backgroundColor = NSColor.systemOrange.cgColor
-        dot.cornerRadius = dotSize / 2
-        dot.contentsScale = NSScreen.main?.backingScaleFactor ?? 2
-        dot.autoresizingMask = [.layerMinXMargin, .layerMinYMargin]
-        buttonLayer.addSublayer(dot)
-        badgeDotLayer = dot
     }
 
     static func showPopoverFromMenubar(_ popover: NSPopover) {
