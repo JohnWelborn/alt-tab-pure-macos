@@ -1,9 +1,8 @@
 import Cocoa
 import Darwin
 import ShortcutRecorder
-import AppCenterCrashes
 
-class App: AppCenterApplication {
+class App: NSApplication {
     /// Held for the process lifetime. `static let` is lazy, so `init` has to touch it or App Nap is never
     /// disabled.
     private static let activity = ProcessInfo.processInfo.beginActivity(options: .userInitiatedAllowingIdleSystemSleep,
@@ -32,10 +31,6 @@ class App: AppCenterApplication {
     private static let launchInventoryGraceInMs = 400
     private static var pendingShowSettingsWindow = false
     private static var firstLaunchSettingsObserver: NSObjectProtocol?
-    /// Written once and never read: AppCenter holds its delegate weakly, so this is the strong reference
-    /// that keeps the crash handler alive for the process lifetime.
-    // periphery:ignore
-    private static var appCenterDelegate: AppCenterCrash?
     // don't queue multiple delayed rebuildUi() calls
     private static var delayedDisplayScheduled = 0
     private static let switcherUiRepaintCoalescer = RepaintCoalescer()
@@ -534,7 +529,6 @@ class App: AppCenterApplication {
 
 extension App: NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        App.appCenterDelegate = AppCenterCrash()
         App.shared.disableRelaunchOnLogin()
         Logger.initialize()
         MainThreadStall.observe()
