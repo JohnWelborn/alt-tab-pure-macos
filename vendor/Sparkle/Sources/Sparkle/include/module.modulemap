@@ -1,5 +1,0 @@
-module Sparkle {
-    umbrella "Sparkle"
-    export *
-    module * { export * }
-}
