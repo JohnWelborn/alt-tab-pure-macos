@@ -15,8 +15,7 @@ class AboutTab {
             BoldLabel(App.name),
             NSTextField(wrappingLabelWithString: NSLocalizedString("Version", comment: "") + " " + App.version),
             NSTextField(wrappingLabelWithString: App.licence),
-            HyperlinkLabel(NSLocalizedString("Website", comment: ""), Endpoints.website),
-            HyperlinkLabel(NSLocalizedString("Source code", comment: ""), App.repository),
+            HyperlinkLabel(NSLocalizedString("Source code", comment: ""), "https://github.com/JohnWelborn/alt-tab-pure-macos"),
         ], .vertical)
         appText.spacing = GridView.interPadding / 2
         let rowToSeparate = 3

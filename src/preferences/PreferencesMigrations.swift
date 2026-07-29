@@ -4,6 +4,28 @@ class PreferencesMigrations {
     /// Injectable so tests can run migrations against an isolated `UserDefaults` suite.
     /// Production keeps `.standard`; behavior is unchanged.
     static var defaults = UserDefaults.standard
+    static var legacyDefaults = UserDefaults(suiteName: legacyBundleIdentifier)!
+    static var legacyDefaultsDomainName = legacyBundleIdentifier
+    static var launchAgentsDirectory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents", isDirectory: true)
+
+    private static let legacyBundleIdentifier = "com.lwouis.alt-tab-macos"
+    private static let legacyMigrationKey = "migratedLegacyBundleIdentifier"
+
+    static func migrateLegacyBundleIdentifier() {
+        guard !defaults.bool(forKey: legacyMigrationKey) else { return }
+        if let legacyDomain = legacyDefaults.persistentDomain(forName: legacyDefaultsDomainName) {
+            legacyDomain.forEach { defaults.set($0.value, forKey: $0.key) }
+        }
+        defaults.set(false, forKey: "startAtLogin")
+        removeLaunchAgents()
+        defaults.set(true, forKey: legacyMigrationKey)
+    }
+
+    private static func removeLaunchAgents() {
+        [legacyBundleIdentifier, App.bundleIdentifier].forEach {
+            try? FileManager.default.removeItem(at: launchAgentsDirectory.appendingPathComponent("\($0).plist"))
+        }
+    }
 
     static func removeCorruptedPreferences() {
         // from v5.1.0+, there are crash reports of users somehow having their hold shortcuts set to ""

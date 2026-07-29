@@ -14,18 +14,72 @@ import XCTest
 final class PreferencesMigrationsTests: XCTestCase {
     var defaults: UserDefaults!
     var suiteName: String!
+    var legacyDefaults: UserDefaults!
+    var legacySuiteName: String!
+    var launchAgentsDirectory: URL!
 
     override func setUp() {
         super.setUp()
         suiteName = "com.lwouis.alt-tab-macos.tests.migrations"
         defaults = TestDefaults.make(suiteName)
+        legacySuiteName = "com.lwouis.alt-tab-macos.tests.legacy-migrations"
+        legacyDefaults = TestDefaults.make(legacySuiteName)
+        launchAgentsDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try! FileManager.default.createDirectory(at: launchAgentsDirectory, withIntermediateDirectories: true)
         PreferencesMigrations.defaults = defaults
+        PreferencesMigrations.legacyDefaults = legacyDefaults
+        PreferencesMigrations.legacyDefaultsDomainName = legacySuiteName
+        PreferencesMigrations.launchAgentsDirectory = launchAgentsDirectory
     }
 
     override func tearDown() {
         PreferencesMigrations.defaults = .standard
         TestDefaults.tearDown(defaults, suiteName)
+        PreferencesMigrations.legacyDefaults = UserDefaults(suiteName: "com.lwouis.alt-tab-macos")!
+        PreferencesMigrations.legacyDefaultsDomainName = "com.lwouis.alt-tab-macos"
+        PreferencesMigrations.launchAgentsDirectory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents", isDirectory: true)
+        TestDefaults.tearDown(legacyDefaults, legacySuiteName)
+        try? FileManager.default.removeItem(at: launchAgentsDirectory)
         super.tearDown()
+    }
+
+    // MARK: - Legacy bundle identifier
+
+    func testMigratesLegacyPreferencesOnceAndDisablesLogin() {
+        legacyDefaults.set("false", forKey: "mouseHoverEnabled")
+        legacyDefaults.set("true", forKey: "startAtLogin")
+        let legacyAgent = launchAgentsDirectory.appendingPathComponent("com.lwouis.alt-tab-macos.plist")
+        let currentAgent = launchAgentsDirectory.appendingPathComponent("\(App.bundleIdentifier).plist")
+        FileManager.default.createFile(atPath: legacyAgent.path, contents: Data())
+        FileManager.default.createFile(atPath: currentAgent.path, contents: Data())
+
+        PreferencesMigrations.migrateLegacyBundleIdentifier()
+
+        XCTAssertEqual(defaults.string(forKey: "mouseHoverEnabled"), "false")
+        XCTAssertFalse(defaults.bool(forKey: "startAtLogin"))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: legacyAgent.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: currentAgent.path))
+        XCTAssertTrue(defaults.bool(forKey: "migratedLegacyBundleIdentifier"))
+    }
+
+    func testLegacyMigrationOverwritesFirstLaunchPreferences() {
+        defaults.set("true", forKey: "mouseHoverEnabled")
+        legacyDefaults.set("false", forKey: "mouseHoverEnabled")
+
+        PreferencesMigrations.migrateLegacyBundleIdentifier()
+
+        XCTAssertEqual(defaults.string(forKey: "mouseHoverEnabled"), "false")
+        XCTAssertTrue(defaults.bool(forKey: "migratedLegacyBundleIdentifier"))
+    }
+
+    func testLegacyMigrationIsIdempotent() {
+        legacyDefaults.set("first", forKey: "customValue")
+        PreferencesMigrations.migrateLegacyBundleIdentifier()
+        legacyDefaults.set("second", forKey: "customValue")
+
+        PreferencesMigrations.migrateLegacyBundleIdentifier()
+
+        XCTAssertEqual(defaults.string(forKey: "customValue"), "first")
     }
 
     // MARK: - A. Version gating (shouldRun)
