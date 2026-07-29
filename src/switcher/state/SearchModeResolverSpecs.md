@@ -26,9 +26,8 @@ the Edit menu, call `App.cycleSelection`).
 - **Escape is contextual** (the headline interaction): if search was *toggled mid-session*, Escape
   exits search back to the normal switcher (a second Escape then closes it). If the session *started
   in search*, Escape closes the whole switcher immediately — there's no "normal switcher" to fall back to.
-- **Pro gating timing**: `ProFeature.searchInSwitcher.attemptUse()` has side effects (consume the free
-  pass, surface the upgrade UI), so the *caller* evaluates it at the real attempt moment and passes a
-  `Bool` in. The gate is checked **before** the state branches, so a denied attempt never mutates mode
+- **Pro gating timing**: the caller evaluates `ProFeature.searchInSwitcher.attemptUse()` at the real
+  attempt moment and passes a `Bool` in. The gate is checked **before** the state branches, so a denied attempt never mutates mode
   (it returns `.proGateBlocked`). `toggle` is gate-free — it just routes to the enter/disable path,
   which applies its own gate (mirrors the original delegation).
 - **Entering editing refreshes the UI** (`enterEditing` is only reached from `.off`).

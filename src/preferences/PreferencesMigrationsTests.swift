@@ -354,7 +354,7 @@ extension App {
 }
 
 enum ProTransitionState {
-    static func markFreshInstallIfUnknown(_ value: Bool) {}
+    static func removeLegacyPromptState() {}
 }
 
 enum AxError: Error {
