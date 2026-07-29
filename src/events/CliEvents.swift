@@ -1,3 +1,5 @@
+import Cocoa
+
 class CliEvents {
     static let portName = "\(App.bundleIdentifier).cli"
 

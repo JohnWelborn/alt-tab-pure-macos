@@ -1,4 +1,5 @@
 import Foundation
+import Cocoa
 
 /// Coordinates preference locking and restoration as the license state changes.
 class ProTransitionManager {

@@ -40,7 +40,6 @@ class PreferencesEvents {
     static func initialize() {
         guard !initialized else { return }
         initialized = true
-        UserDefaultsEvents.observe()
         ControlsTab.initializePreferencesDependentState()
         TrackpadEvents.toggle(Preferences.nextWindowGesture != .disabled)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

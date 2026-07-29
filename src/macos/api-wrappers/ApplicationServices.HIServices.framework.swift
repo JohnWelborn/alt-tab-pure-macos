@@ -1,3 +1,6 @@
+import Cocoa
+import ApplicationServices
+
 /// for some reason, this attribute is missing from ApplicationServices.HIServices.AXUIElement
 /// returns the CGWindowID of the provided AXUIElement
 /// * macOS 10.10+
@@ -38,5 +41,4 @@ func GetProcessInformation(_ psn: UnsafeMutablePointer<ProcessSerialNumber>, _ i
 /// * macOS 10.9-10.15 (officially removed in 10.9, but available as a private API still)
 @_silgen_name("GetProcessForPID") @discardableResult
 func GetProcessForPID(_ pid: pid_t, _ psn: UnsafeMutablePointer<ProcessSerialNumber>) -> OSStatus
-
 
