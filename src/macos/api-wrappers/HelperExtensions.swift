@@ -341,7 +341,7 @@ extension NSWindow {
 
     /// Safe replacement for `setFrameAutosaveName`: that call doesn't just register a name, it
     /// immediately applies the frame persisted under "NSWindow Frame <name>". A corrupt persisted
-    /// frame makes that apply throw and aborts the app (FeedbackWindow crash f481d5b0). Drop the bad
+    /// frame makes that apply throw and aborts the app. Drop the bad
     /// value first so AppKit never sees it. Returns whether a valid saved frame is present.
     @discardableResult
     func setFrameAutosaveNameSafely(_ name: NSWindow.FrameAutosaveName) -> Bool {

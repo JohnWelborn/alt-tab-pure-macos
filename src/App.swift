@@ -20,7 +20,6 @@ class App: NSApplication {
         return CGImage.bestMatch(appIconReps, for: scaled)
     }
     override class var shared: App { super.shared as! App }
-    static var supportProjectAction: Selector { #selector(App.supportProject) }
     static var upgradeToProAction: Selector { #selector(App.upgradeToPro) }
     static var openAccountAction: Selector { #selector(App.openAccount) }
     static var isTerminating = false
@@ -80,7 +79,6 @@ class App: NSApplication {
         SettingsWindow.canBecomeKey_ = canBecomeKey_
         AboutWindow.canBecomeKey_ = canBecomeKey_
         PermissionsWindow.canBecomeKey_ = canBecomeKey_
-        FeedbackWindow.canBecomeKey_ = canBecomeKey_
         DebugWindow.canBecomeKey_ = canBecomeKey_
     }
 
@@ -95,23 +93,12 @@ class App: NSApplication {
         showPermissionsWindow()
     }
 
-    @objc static func supportProject() {
-        NSWorkspace.shared.open(URL(string: Endpoints.supportUrl)!)
-    }
-
     @objc static func upgradeToPro() {
         ProTransitionManager.openCheckout()
     }
 
     @objc static func openAccount() {
         UpgradeTab.openAccountPage()
-    }
-
-    @objc static func showFeedbackPanel() {
-        let wasFresh = FeedbackWindow.shared == nil
-        initializeFeedbackWindowIfNeeded()
-        if !wasFresh { FeedbackWindow.shared?.reset() }
-        showSecondaryWindow(FeedbackWindow.shared!)
     }
 
     @objc static func showDebugWindow() {
@@ -160,10 +147,6 @@ class App: NSApplication {
 
     private static func initializeAboutWindowIfNeeded() {
         if AboutWindow.shared == nil { _ = AboutWindow() }
-    }
-
-    private static func initializeFeedbackWindowIfNeeded() {
-        if FeedbackWindow.shared == nil { _ = FeedbackWindow() }
     }
 
     private static func initializeDebugWindowIfNeeded() {

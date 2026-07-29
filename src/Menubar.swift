@@ -6,7 +6,6 @@ class Menubar {
     static var permissionCalloutMenuItems: [NSMenuItem]?
     private static var permissionCallout: PermissionCallout?
     private static var upgradeToProMenuItem: NSMenuItem!
-    private static var supportProjectMenuItem: NSMenuItem!
     private static var myAccountMenuItem: NSMenuItem!
     private static let menuDelegate = MenubarMenuDelegate()
     private static var isVisibleObserver: NSKeyValueObservation?
@@ -41,11 +40,9 @@ class Menubar {
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is AltTab"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
         addMenuItem(NSLocalizedString("Debug tools", comment: "Menubar option"), #selector(App.showDebugWindow), "", "scope", nil, App.self)
-        addMenuItem(NSLocalizedString("Send feedback…", comment: "Menubar option"), #selector(App.showFeedbackPanel), "", "text.bubble", nil, App.self)
         upgradeToProMenuItem = addMenuItem(NSLocalizedString("Get Pro", comment: "Menubar option"), App.upgradeToProAction, "", "star.fill", nil, App.self)
         upgradeToProMenuItem.view = UpgradeMenuItemView()
         myAccountMenuItem = addMenuItem(NSLocalizedString("My Account", comment: ""), App.openAccountAction, "", "person.crop.circle", nil, App.self)
-        supportProjectMenuItem = addMenuItem(NSLocalizedString("Support this project", comment: "Menubar option"), App.supportProjectAction, "", "heart.fill", .red, App.self)
         refreshLicenseMenuItems()
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "%@ is AltTab"), App.name), #selector(NSApplication.terminate(_:)), "q", nil) // "xmark.rectangle" is not necessary; macos automatically recognizes Quit
@@ -86,19 +83,15 @@ class Menubar {
         switch state {
         case .trial:
             toggleUpgradeMenuItem(true)
-            supportProjectMenuItem.isHidden = true
             myAccountMenuItem.isHidden = true
         case .pro:
             toggleUpgradeMenuItem(false)
-            supportProjectMenuItem.isHidden = true
             myAccountMenuItem.isHidden = false
         case .proExpired:
             toggleUpgradeMenuItem(true)
-            supportProjectMenuItem.isHidden = false
             myAccountMenuItem.isHidden = false
         case .trialExpired:
             toggleUpgradeMenuItem(true)
-            supportProjectMenuItem.isHidden = false
             myAccountMenuItem.isHidden = true
         }
         if case .pro = state { return }
@@ -107,7 +100,7 @@ class Menubar {
 
     private static func toggleUpgradeMenuItem(_ show: Bool) {
         if show && !menu.items.contains(upgradeToProMenuItem) {
-            if let i = menu.items.firstIndex(of: supportProjectMenuItem) {
+            if let i = menu.items.firstIndex(of: myAccountMenuItem) {
                 menu.insertItem(upgradeToProMenuItem, at: i)
             }
         }
