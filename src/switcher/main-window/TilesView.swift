@@ -163,7 +163,6 @@ class TilesView {
 
     private static func updateSearchQuery(_ query: String) {
         if (SwitcherSession.current?.searchQuery ?? "") == query { return }
-        if !query.isEmpty { UsageStats.recordSearchIfFirst() }
         clearHover()
         Windows.updateSearchQuery(query)
         stopKeyRepeatTimers()

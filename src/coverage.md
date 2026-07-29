@@ -34,7 +34,6 @@ unit-tested (Humble Object pattern), so it doesn't appear here; that's by design
 | 93% (13/14) | `src/preferences/settings-window/tabs/controls/OverrideClickResolver.swift` |
 | 93% (93/100) | `src/switcher/state/SelectionResolver.swift` |
 | 93% (109/117) | `src/switcher/ATShortcut.swift` |
-| 93% (28/30) | `src/util/UsageStatsTestable.swift` |
 | 96% (48/50) | `src/switcher/state/WindowOrderResolver.swift` |
 | 98% (391/397) | `src/switcher/SearchTestable.swift` |
 | 100% (108/108) | `src/pro/scheduling/ProTransitionManagerTestable.swift` |

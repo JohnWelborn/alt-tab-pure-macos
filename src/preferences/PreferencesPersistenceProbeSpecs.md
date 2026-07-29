@@ -33,6 +33,6 @@ plist itself.
 - **Absent is never broken.** `exists == false` short-circuits before either check, regardless of the
   `isWritable` value the shell happened to pass. This is what keeps first-launch users (no plist yet) quiet.
 - **All suites in scope, reported separately.** The probe runs over every suite AltTab persists to
-  (`standard`/preferences, `.license`, `.usage`). `.broken` carries two path lists so the shell can tailor
+  (`standard`/preferences, `.license`). `.broken` carries two path lists so the shell can tailor
   the explanation: symlinked paths get the "un-sync it" advice, unwritable paths get the "fix ownership"
   advice. Either list may be empty, but not both (that would be `.ok`).

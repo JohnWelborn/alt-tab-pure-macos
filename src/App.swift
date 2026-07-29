@@ -58,7 +58,6 @@ class App: NSApplication {
         guard SwitcherSession.current != nil else { return } // already hidden
         SwitcherSession.current = nil
         KeyboardEvents.updateEscapeAbsorptionTap() // session closed: stop tapping keyDown (#5766)
-        UsageStats.resetSession()
         TilesView.endSearchSession()
         ContextMenuEvents.toggle(false)
         CursorEvents.toggle(false)
@@ -304,7 +303,6 @@ class App: NSApplication {
         }()
         session.forceDoNothingOnRelease = forceDoNothingOnRelease_
         Logger.debug { "isFirstSummon:\(session.isFirstSummon) shortcutIndex:\(shortcutIndex)" }
-        UsageStats.recordTrigger(shortcutIndex)
         if session.isFirstSummon || shortcutIndex != session.shortcutIndex {
             NSScreen.updatePreferred()
             if isVeryFirstSummon {
@@ -409,7 +407,6 @@ class App: NSApplication {
         if QAMenu.openSettingsOnLaunch { App.showSettingsWindow() }
         if QAMenu.graphEnabled { DebugMenu.setEnabled(true) }
         #endif
-        UsageStats.prune()
         ProTransitionManager.shared.onAction = { ProPromptHost.shared.dispatch($0) }
         ProTransitionManager.shared.onAppLaunchComplete()
         Logger.info { "Finished launching AltTab" }

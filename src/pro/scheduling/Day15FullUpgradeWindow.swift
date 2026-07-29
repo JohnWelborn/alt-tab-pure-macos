@@ -4,22 +4,19 @@ class Day15FullUpgradeWindow: ProPromptWindow {
     static var shared: Day15FullUpgradeWindow?
 
     private var header: ProPromptHeader!
-    private var hero: UsageStatHeroView!
+    private var supportingLine: NSTextField!
 
     static func show(for reason: HardGateReason? = nil) {
         if shared == nil { shared = Day15FullUpgradeWindow() }
         shared!.header.title = (reason?.resolved ?? .nonEngaged).unlockHeader
-        shared!.hero.supportingLine = supportingLine(for: reason)
-        // The singleton is reused across re-shows; refresh so the cumulative trigger /
-        // Pro-use numbers track usage growth instead of staying frozen at first-render.
-        shared!.hero.refresh()
+        shared!.supportingLine.stringValue = supportingLine(for: reason)
         shared!.fitContentHeight()
         App.showSecondaryWindow(shared!)
     }
 
     private static func supportingLine(for reason: HardGateReason?) -> String {
         let resolved = reason?.resolved ?? .nonEngaged
-        if resolved == .nonEngaged || UsageStats.usedProFeaturesSessionCount == 0 {
+        if resolved == .nonEngaged {
             return NSLocalizedString(
                 "AltTab Pro adds 4 features beyond the free switcher.",
                 comment: "")
@@ -53,8 +50,8 @@ class Day15FullUpgradeWindow: ProPromptWindow {
         let header = ProPromptHeader(title: ResolvedReason.nonEngaged.unlockHeader, size: .large)
         self.header = header
 
-        let hero = UsageStatHeroView(supportingLine: Self.supportingLine(for: nil))
-        self.hero = hero
+        let supportingLine = Self.makeSupportingLine(Self.supportingLine(for: nil))
+        self.supportingLine = supportingLine
 
         let purchaseButton = NSButton(title: NSLocalizedString("Get Pro", comment: ""), target: nil, action: nil)
         purchaseButton.translatesAutoresizingMaskIntoConstraints = false
@@ -67,7 +64,7 @@ class Day15FullUpgradeWindow: ProPromptWindow {
         continueLink.onAction = { [weak self] _ in self?.close() }
 
         container.addSubview(header)
-        container.addSubview(hero)
+        container.addSubview(supportingLine)
         container.addSubview(purchaseButton)
         container.addSubview(continueLink)
 
@@ -77,11 +74,11 @@ class Day15FullUpgradeWindow: ProPromptWindow {
             header.leadingAnchor.constraint(greaterThanOrEqualTo: container.leadingAnchor, constant: 30),
             header.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -30),
 
-            hero.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 24),
-            hero.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 30),
-            hero.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -30),
+            supportingLine.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 24),
+            supportingLine.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 30),
+            supportingLine.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -30),
 
-            purchaseButton.topAnchor.constraint(equalTo: hero.bottomAnchor, constant: 24),
+            purchaseButton.topAnchor.constraint(equalTo: supportingLine.bottomAnchor, constant: 24),
             purchaseButton.centerXAnchor.constraint(equalTo: container.centerXAnchor),
 
             continueLink.topAnchor.constraint(equalTo: purchaseButton.bottomAnchor, constant: 12),
@@ -98,5 +95,13 @@ class Day15FullUpgradeWindow: ProPromptWindow {
         guard let view = contentView else { return }
         view.layoutSubtreeIfNeeded()
         setContentSize(NSSize(width: view.frame.width, height: view.fittingSize.height))
+    }
+
+    private static func makeSupportingLine(_ text: String) -> NSTextField {
+        let label = NSTextField(wrappingLabelWithString: text)
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = .secondaryLabelColor
+        label.alignment = .center
+        return label
     }
 }
