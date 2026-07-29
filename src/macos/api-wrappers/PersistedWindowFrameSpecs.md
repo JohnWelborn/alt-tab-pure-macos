@@ -6,7 +6,7 @@
 window-frame string that AppKit persisted in `UserDefaults` (key `"NSWindow Frame <name>"`) is safe to
 restore. AppKit's `setFrameAutosaveName` / `setFrameUsingName` **immediately apply** that string, and an
 out-of-range or non-finite frame makes the apply throw `NSInternalInconsistencyException` and abort the
-app (crash `f481d5b0`, `FeedbackWindow`). `setFrameAutosaveNameSafely` calls this predicate and drops a
+app. `setFrameAutosaveNameSafely` calls this predicate and drops a
 corrupt value before AppKit ever sees it.
 
 The persisted string is space-separated numbers: the window frame `x y w h`, optionally followed by the

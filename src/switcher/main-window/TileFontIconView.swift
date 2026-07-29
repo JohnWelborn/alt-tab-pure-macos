@@ -24,9 +24,6 @@ enum Symbols: String {
     // Permission window icons
     case accessibility = "􀕾"         // accessibility
     case display = "􀢹"               // display
-    // Feedback window icons
-    case ladybug = "􀯔"               // ladybug
-    case lightbulb = "􀛭"             // lightbulb
     // Segmented-control / button icons
     case plus = "􀅼"                  // plus
     case minus = "􀅽"                 // minus
