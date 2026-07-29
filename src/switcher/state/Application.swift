@@ -96,8 +96,7 @@ class Application: NSObject {
         super.init()
         // debug, not info: this fires for EVERY running process AltTab tracks, so at launch it printed ~50
         // lines of daemons and agents that can never appear in the switcher (PowerChime, loginwindow,
-        // AXVisualSupportAgent…). A process listing is not what a bug report needs; `DebugProfile` already
-        // reports the count, and `RunningApplicationsEvents` logs launches and quits.
+        // AXVisualSupportAgent…). `RunningApplicationsEvents` already logs launches and quits at info level.
         Logger.debug { self.debugId }
         // Here rather than at a call site: a process reaches the model through `Applications.createActualApp`
         // AND through the synchronous `findOrCreate` an AX/WindowServer event for an unknown pid takes, and
