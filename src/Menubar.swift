@@ -5,8 +5,6 @@ class Menubar {
     static var menu: NSMenu!
     static var permissionCalloutMenuItems: [NSMenuItem]?
     private static var permissionCallout: PermissionCallout?
-    private static var upgradeToProMenuItem: NSMenuItem!
-    private static var myAccountMenuItem: NSMenuItem!
     private static let menuDelegate = MenubarMenuDelegate()
     private static var isVisibleObserver: NSKeyValueObservation?
 
@@ -40,10 +38,6 @@ class Menubar {
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("About %@", comment: "Menubar option. %@ is AltTab"), App.name), #selector(App.showAboutWindow), "", "info.circle", nil, App.self)
         addMenuItem(NSLocalizedString("Debug tools", comment: "Menubar option"), #selector(App.showDebugWindow), "", "scope", nil, App.self)
-        upgradeToProMenuItem = addMenuItem(NSLocalizedString("Get Pro", comment: "Menubar option"), App.upgradeToProAction, "", "star.fill", nil, App.self)
-        upgradeToProMenuItem.view = UpgradeMenuItemView()
-        myAccountMenuItem = addMenuItem(NSLocalizedString("My Account", comment: ""), App.openAccountAction, "", "person.crop.circle", nil, App.self)
-        refreshLicenseMenuItems()
         menu.addItem(NSMenuItem.separator())
         addMenuItem(String(format: NSLocalizedString("Quit %@", comment: "%@ is AltTab"), App.name), #selector(NSApplication.terminate(_:)), "q", nil) // "xmark.rectangle" is not necessary; macos automatically recognizes Quit
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -76,38 +70,6 @@ class Menubar {
         }
     }
     #endif
-
-    static func refreshLicenseMenuItems() {
-        guard upgradeToProMenuItem != nil else { return }
-        let state = LicenseManager.shared.state
-        switch state {
-        case .trial:
-            toggleUpgradeMenuItem(true)
-            myAccountMenuItem.isHidden = true
-        case .pro:
-            toggleUpgradeMenuItem(false)
-            myAccountMenuItem.isHidden = false
-        case .proExpired:
-            toggleUpgradeMenuItem(true)
-            myAccountMenuItem.isHidden = false
-        case .trialExpired:
-            toggleUpgradeMenuItem(true)
-            myAccountMenuItem.isHidden = true
-        }
-        if case .pro = state { return }
-        (upgradeToProMenuItem.view as? UpgradeMenuItemView)?.updateContent(state)
-    }
-
-    private static func toggleUpgradeMenuItem(_ show: Bool) {
-        if show && !menu.items.contains(upgradeToProMenuItem) {
-            if let i = menu.items.firstIndex(of: myAccountMenuItem) {
-                menu.insertItem(upgradeToProMenuItem, at: i)
-            }
-        }
-        if !show && menu.items.contains(upgradeToProMenuItem) {
-            menu.removeItem(upgradeToProMenuItem)
-        }
-    }
 
     // The callout is only useful when the user lacks Screen Recording AND has settings that need it
     // (Thumbnails style or window previews). Users who skipped the permission but use neither aren't
@@ -145,9 +107,7 @@ class Menubar {
     }
 
     static func menubarIconCallback(_: NSControl?) {
-        // Guard: can be invoked during `LicenseManager.initialize()` (e.g. Pro users where
-        // `onStateChanged` → `ProTransitionManager.onLicenseStateChanged` fires before
-        // `Menubar.setup()`), at which point `statusItem` is still nil.
+        // Guard: can be invoked before `Menubar.initialize()`, at which point `statusItem` is still nil.
         guard statusItem != nil else { return }
         applyMenubarIconPreferences()
         if let menubarIconDropdown = GeneralTab.menubarIconDropdown {
@@ -191,168 +151,8 @@ class Menubar {
     }
 }
 
-class UpgradeMenuItemView: NSView {
-    /// Insets of the gradient backdrop relative to the menu row bounds. Sized to align with the
-    /// rounded highlight rect AppKit draws on hover for the other menu rows; values live in
-    /// `NSEdgeInsets` so the constraint code below stays free of inline pixel literals.
-    private static let backdropInsets = NSEdgeInsets(top: 1, left: 5, bottom: 1, right: 5)
-
-    private let label = NSTextField(labelWithString: "")
-    /// Auto-layout host for the gradient. Constrained to the row edges with `backdropInsets`,
-    /// so the gradient layer (sized to `backdrop.bounds` in `layout()`) follows from the
-    /// constraint system rather than from manual `bounds.insetBy(...)` math.
-    private let backdrop = NSView()
-    private var highlightObservation: NSKeyValueObservation?
-    private let gradientLayer = ProGradient.makeLayer()
-    private var isShining = false
-
-    override init(frame: NSRect) {
-        super.init(frame: frame)
-        wantsLayer = true
-        translatesAutoresizingMaskIntoConstraints = false
-        backdrop.translatesAutoresizingMaskIntoConstraints = false
-        backdrop.wantsLayer = true
-        gradientLayer.cornerRadius = 7
-        gradientLayer.masksToBounds = true
-        backdrop.layer?.addSublayer(gradientLayer)
-        addSubview(backdrop)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.maximumNumberOfLines = 2
-        label.isEditable = false
-        label.isSelectable = false
-        label.drawsBackground = false
-        label.isBezeled = false
-        label.alignment = .left
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        addSubview(label)
-        let icon = NSImageView()
-        icon.translatesAutoresizingMaskIntoConstraints = false
-        icon.image = NSImage.fromSymbol(.starFill, pointSize: 11)
-        if #available(macOS 10.14, *) { icon.contentTintColor = .white }
-        icon.setContentHuggingPriority(.required, for: .horizontal)
-        icon.setContentCompressionResistancePriority(.required, for: .horizontal)
-        addSubview(icon)
-        // match standard NSMenuItem icon+text positioning. Our font-rendered icons are tight
-        // ink-bounds (no typographic padding around the glyph), so we centre the icon view
-        // inside the same column AppKit reserves for sibling-row icons rather than leading-
-        // align it — otherwise the glyph appears shifted ~3pt left of the other icons.
-        NSLayoutConstraint.activate([
-            icon.centerXAnchor.constraint(equalTo: leadingAnchor, constant: 25),
-            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 39),
-        ])
-        NSLayoutConstraint.activate([
-            label.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -14),
-            label.topAnchor.constraint(equalTo: topAnchor, constant: 3),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -3),
-
-            backdrop.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.backdropInsets.left),
-            backdrop.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Self.backdropInsets.right),
-            backdrop.topAnchor.constraint(equalTo: topAnchor, constant: Self.backdropInsets.top),
-            backdrop.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.backdropInsets.bottom),
-        ])
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("Class only supports programmatic initialization")
-    }
-
-    override func layout() {
-        super.layout()
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        gradientLayer.frame = backdrop.bounds
-        CATransaction.commit()
-    }
-
-    override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow()
-        highlightObservation = enclosingMenuItem?.observe(\.isHighlighted, options: [.new]) { [weak self] _, change in
-            if change.newValue == true { self?.playShineAnimation() }
-        }
-    }
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        for ta in trackingAreas { removeTrackingArea(ta) }
-        addTrackingArea(NSTrackingArea(rect: bounds,
-            options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
-            owner: self, userInfo: nil))
-    }
-
-    override func mouseEntered(with event: NSEvent) {
-        playShineAnimation()
-    }
-
-    private func playShineAnimation() {
-        guard !isShining else { return }
-        let pillBounds = gradientLayer.bounds
-        let shine = CAGradientLayer()
-        shine.colors = [
-            NSColor.white.withAlphaComponent(0).cgColor,
-            NSColor.white.withAlphaComponent(0.3).cgColor,
-            NSColor.white.withAlphaComponent(0).cgColor,
-        ]
-        shine.locations = [0, 0.5, 1]
-        shine.startPoint = CGPoint(x: 0, y: 0.5)
-        shine.endPoint = CGPoint(x: 1, y: 0.5)
-        shine.frame = CGRect(x: -pillBounds.width, y: 0, width: pillBounds.width, height: pillBounds.height)
-        gradientLayer.addSublayer(shine)
-        isShining = true
-        let animation = CABasicAnimation(keyPath: "position.x")
-        animation.fromValue = -pillBounds.width / 2
-        animation.toValue = pillBounds.width + pillBounds.width / 2
-        animation.duration = 0.6
-        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        CATransaction.begin()
-        CATransaction.setCompletionBlock { [weak self] in
-            shine.removeFromSuperlayer()
-            self?.isShining = false
-        }
-        shine.add(animation, forKey: "shine")
-        CATransaction.commit()
-    }
-
-    func updateContent(_ state: LicenseState) {
-        // "Get Pro" matches the standard menubar item size; the trial subtitle matches the smaller,
-        // dimmed-white styling used by the SettingsWindow upgrade button.
-        let menuFontSize = NSFont.menuFont(ofSize: 0).pointSize
-        let mainAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: NSColor.white,
-            .font: NSFont.systemFont(ofSize: menuFontSize, weight: .regular),
-        ]
-        let secondaryAttrs: [NSAttributedString.Key: Any] = [
-            .foregroundColor: NSColor.white.withAlphaComponent(0.8),
-            .font: NSFont.systemFont(ofSize: 11, weight: .regular),
-        ]
-        let trialText: String
-        if case .trial(let daysRemaining) = state {
-            trialText = String(format: NSLocalizedString("Trial: %d days remaining", comment: ""), daysRemaining)
-        } else if case .proExpired = state {
-            trialText = NSLocalizedString("License doesn't cover this version", comment: "")
-        } else {
-            trialText = NSLocalizedString("Trial expired", comment: "")
-        }
-        let result = NSMutableAttributedString()
-        result.append(NSAttributedString(string: trialText, attributes: secondaryAttrs))
-        result.append(NSAttributedString(string: "\n", attributes: mainAttrs))
-        result.append(NSAttributedString(string: NSLocalizedString("Get Pro", comment: "Menubar option"), attributes: mainAttrs))
-        label.attributedStringValue = result
-    }
-
-    override func mouseUp(with event: NSEvent) {
-        let location = convert(event.locationInWindow, from: nil)
-        guard bounds.contains(location) else { return }
-        enclosingMenuItem?.menu?.cancelTracking()
-        App.upgradeToPro()
-    }
-}
-
 private final class MenubarMenuDelegate: NSObject, NSMenuDelegate {
-    // Trial day count is baked into `LicenseManager.state`; recompute right before the menu
-    // opens so the dropdown subtitle reflects the current clock instead of the launch-day value.
     func menuWillOpen(_ menu: NSMenu) {
-        LicenseManager.shared.refreshState()
         Menubar.refreshPermissionCallout()
     }
 }
@@ -380,7 +180,7 @@ class PermissionCallout: StackView {
 
     // NSControl target/action never fires inside an NSMenuItem custom view: the menu's modal
     // tracking loop swallows the click before the button's own mouse-tracking can call sendAction.
-    // So we route the click through the container exactly like `UpgradeMenuItemView` — `hitTest`
+    // So we route the click through the container — `hitTest`
     // keeps the button visual-only, and `mouseUp` runs the action and dismisses the menu. (#5771)
     override func hitTest(_ point: NSPoint) -> NSView? {
         super.hitTest(point) != nil ? self : nil

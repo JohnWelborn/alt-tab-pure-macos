@@ -18,6 +18,8 @@ final class PreferencesMigrationsTests: XCTestCase {
     var suiteName: String!
     var legacyDefaults: UserDefaults!
     var legacySuiteName: String!
+    var legacyEntitlementDefaults: UserDefaults!
+    var legacyEntitlementSuiteName: String!
     var launchAgentsDirectory: URL!
 
     override func setUp() {
@@ -26,11 +28,14 @@ final class PreferencesMigrationsTests: XCTestCase {
         defaults = UserDefaults(suiteName: suiteName)!
         legacySuiteName = "test-legacy-migrations-\(UUID().uuidString)"
         legacyDefaults = UserDefaults(suiteName: legacySuiteName)!
+        legacyEntitlementSuiteName = "test-legacy-entitlements-\(UUID().uuidString)"
+        legacyEntitlementDefaults = UserDefaults(suiteName: legacyEntitlementSuiteName)!
         launchAgentsDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString, isDirectory: true)
         try! FileManager.default.createDirectory(at: launchAgentsDirectory, withIntermediateDirectories: true)
         PreferencesMigrations.defaults = defaults
         PreferencesMigrations.legacyDefaults = legacyDefaults
         PreferencesMigrations.legacyDefaultsDomainName = legacySuiteName
+        PreferencesMigrations.legacyLicenseDefaults = legacyEntitlementDefaults
         PreferencesMigrations.launchAgentsDirectory = launchAgentsDirectory
     }
 
@@ -38,9 +43,11 @@ final class PreferencesMigrationsTests: XCTestCase {
         PreferencesMigrations.defaults = .standard
         PreferencesMigrations.legacyDefaults = UserDefaults(suiteName: "com.lwouis.alt-tab-macos")!
         PreferencesMigrations.legacyDefaultsDomainName = "com.lwouis.alt-tab-macos"
+        PreferencesMigrations.legacyLicenseDefaults = UserDefaults(suiteName: "com.lwouis.alt-tab-macos.license")!
         PreferencesMigrations.launchAgentsDirectory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents", isDirectory: true)
         UserDefaults().removePersistentDomain(forName: suiteName)
         UserDefaults().removePersistentDomain(forName: legacySuiteName)
+        UserDefaults().removePersistentDomain(forName: legacyEntitlementSuiteName)
         try? FileManager.default.removeItem(at: launchAgentsDirectory)
         super.tearDown()
     }
@@ -82,6 +89,36 @@ final class PreferencesMigrationsTests: XCTestCase {
         PreferencesMigrations.migrateLegacyBundleIdentifier()
 
         XCTAssertEqual(defaults.string(forKey: "customValue"), "first")
+    }
+
+    func testRestoresLockedLegacySnapshotWithoutDeletingIt() {
+        defaults.set("0", forKey: "appearanceStyle")
+        legacyEntitlementDefaults.set(1, forKey: "proTransition.rememberedAppearanceStyle")
+
+        PreferencesMigrations.restoreLegacyProSnapshots()
+
+        XCTAssertEqual(defaults.string(forKey: "appearanceStyle"), "1")
+        XCTAssertEqual(legacyEntitlementDefaults.object(forKey: "proTransition.rememberedAppearanceStyle") as? Int, 1)
+    }
+
+    func testDoesNotOverwriteAChangedPreferenceWithLegacySnapshot() {
+        defaults.set("2", forKey: "appearanceStyle")
+        legacyEntitlementDefaults.set(1, forKey: "proTransition.rememberedAppearanceStyle")
+
+        PreferencesMigrations.restoreLegacyProSnapshots()
+
+        XCTAssertEqual(defaults.string(forKey: "appearanceStyle"), "2")
+    }
+
+    func testLegacySnapshotsMigrationIsIdempotent() {
+        defaults.set("0", forKey: "appearanceStyle")
+        legacyEntitlementDefaults.set(1, forKey: "proTransition.rememberedAppearanceStyle")
+        PreferencesMigrations.restoreLegacyProSnapshots()
+        defaults.set("0", forKey: "appearanceStyle")
+
+        PreferencesMigrations.restoreLegacyProSnapshots()
+
+        XCTAssertEqual(defaults.string(forKey: "appearanceStyle"), "0")
     }
 
     // MARK: - A. Version gating (shouldRun)
@@ -405,10 +442,6 @@ enum ShowHowPreference {
 
 extension App {
     static let version = "99.99.99"
-}
-
-enum ProTransitionState {
-    static func removeLegacyPromptState() {}
 }
 
 enum AxError: Error {

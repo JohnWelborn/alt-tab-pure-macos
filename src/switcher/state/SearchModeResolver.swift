@@ -6,9 +6,6 @@ import Foundation
 /// caret, refresh, edit menu, `App.cycleSelection`). No globals, no AppKit, no async — so every
 /// interaction is unit-testable. Behavior mirrors the original branch order exactly.
 ///
-/// Pro gating note: the caller evaluates `ProFeature.searchInSwitcher.attemptUse()` at the real
-/// attempt moment and passes the resulting `Bool` in — the kernel never reads license state. `toggle` is gate-free because the
-/// original `toggleSearchModeFromShortcut` delegated gating to `enableSearchEditing` / `disableSearchMode`.
 
 enum SearchMode {
     case off
@@ -26,15 +23,13 @@ enum CycleDirection: Equatable {
     case left, right, up, down
 }
 
-/// Which production path the search shortcut should take. The Pro gate is applied by the caller
-/// inside the chosen path (matching the original delegation).
+/// Which production path the search shortcut should take.
 enum SearchToggleRoute: Equatable { case enterEditing, disable }
 
 enum SearchModeDecision: Equatable {
     case noOp              // nothing to do (e.g. disabling when already off)
     case enterEditing      // off -> editing (always refreshes the UI)
     case exitToOff
-    case proGateBlocked    // the Pro attempt was denied
     case placeCaretOnly    // already editing: just re-place the caret
 }
 
@@ -52,14 +47,13 @@ enum SearchModeResolver {
         startInSearch ? .editing : .off
     }
 
-    /// Search shortcut: editing → turn off; off → enter editing. Gate applied by caller.
+    /// Search shortcut: editing → turn off; off → enter editing.
     static func toggle(mode: SearchMode) -> SearchToggleRoute {
         mode == .editing ? .disable : .enterEditing
     }
 
-    /// Gate FIRST (mirrors `attemptUse()` on entry), then the already-editing short-circuit, else enter.
-    static func enableEditing(mode: SearchMode, canSearch: Bool) -> SearchModeDecision {
-        if !canSearch { return .proGateBlocked }
+    /// Enter search or re-place the caret if it is already active.
+    static func enableEditing(mode: SearchMode) -> SearchModeDecision {
         if mode == .editing { return .placeCaretOnly }
         return .enterEditing
     }

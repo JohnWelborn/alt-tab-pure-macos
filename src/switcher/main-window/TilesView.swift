@@ -75,7 +75,7 @@ class TilesView {
     }
 
     static func enableSearchEditing() {
-        switch SearchModeResolver.enableEditing(mode: searchMode, canSearch: ProFeature.searchInSwitcher.attemptUse()) {
+        switch SearchModeResolver.enableEditing(mode: searchMode) {
             case .placeCaretOnly:
                 placeSearchCaretAtEnd()
             case .enterEditing:

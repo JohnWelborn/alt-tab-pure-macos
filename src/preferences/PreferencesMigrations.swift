@@ -6,10 +6,12 @@ class PreferencesMigrations {
     static var defaults = UserDefaults.standard
     static var legacyDefaults = UserDefaults(suiteName: legacyBundleIdentifier)!
     static var legacyDefaultsDomainName = legacyBundleIdentifier
+    static var legacyLicenseDefaults = UserDefaults(suiteName: "\(legacyBundleIdentifier).license")!
     static var launchAgentsDirectory = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/LaunchAgents", isDirectory: true)
 
     private static let legacyBundleIdentifier = "com.lwouis.alt-tab-macos"
     private static let legacyMigrationKey = "migratedLegacyBundleIdentifier"
+    private static let legacyProSnapshotsMigrationKey = "migratedLegacyProSnapshots"
 
     static func migrateLegacyBundleIdentifier() {
         guard !defaults.bool(forKey: legacyMigrationKey) else { return }
@@ -40,8 +42,23 @@ class PreferencesMigrations {
         UserDefaults.standard.removePersistentDomain(forName: "\(App.bundleIdentifier).usage")
     }
 
-    static func removeLegacyProPromptState() {
-        ProTransitionState.removeLegacyPromptState()
+    static func restoreLegacyProSnapshots() {
+        guard !defaults.bool(forKey: legacyProSnapshotsMigrationKey) else { return }
+        let snapshots: [(String, String, Int, Int)] = [
+            ("rememberedAppearanceStyle", "appearanceStyle", 3, 0),
+            ("rememberedAppearanceSize", "appearanceSize", 4, 1),
+            ("rememberedShortcutStyle", "shortcutStyle", 3, 0),
+            ("rememberedAppearanceStyleOverride", "appearanceStyleOverride", 3, 0),
+            ("rememberedAppearanceSizeOverride", "appearanceSizeOverride", 4, 1),
+            ("rememberedShortcutStyleOverride", "shortcutStyleOverride", 3, 0),
+        ]
+        snapshots.forEach { rememberedKey, preferenceKey, caseCount, fallbackIndex in
+            guard let snapshot = legacyLicenseDefaults.object(forKey: "proTransition.\(rememberedKey)") as? Int,
+                  (0..<caseCount).contains(snapshot),
+                  defaults.string(forKey: preferenceKey) == String(fallbackIndex) else { return }
+            defaults.set(String(snapshot), forKey: preferenceKey)
+        }
+        defaults.set(true, forKey: legacyProSnapshotsMigrationKey)
     }
 
     static func migratePreferences() {
