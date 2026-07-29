@@ -14,6 +14,10 @@ class PreferencesMigrations {
         }
     }
 
+    static func removeLegacyUsageStatistics() {
+        UserDefaults.standard.removePersistentDomain(forName: "\(App.bundleIdentifier).usage")
+    }
+
     static func migratePreferences() {
         let preferencesKey = "preferencesVersion"
         let existingVersion = Self.defaults.string(forKey: preferencesKey)

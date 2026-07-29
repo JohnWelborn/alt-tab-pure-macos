@@ -2,7 +2,6 @@ import Cocoa
 
 class UpgradeTab {
     private static var statusLabel: LightLabel!
-    private static var usageHero: UsageStatHeroView!
     private static var heroButton: ProHeroButton!
     private static var guaranteeLabel: NSTextField!
     private static var separator: NSBox!
@@ -23,7 +22,6 @@ class UpgradeTab {
         isInitialized = false
         isActivating = false
         statusLabel = nil
-        usageHero = nil
         heroButton = nil
         guaranteeLabel = nil
         separator = nil
@@ -34,7 +32,6 @@ class UpgradeTab {
 
     private static func makeView() -> NSView {
         let headerStrip = makeHeaderStrip()
-        usageHero = UsageStatHeroView()
         heroButton = makeHeroButton()
         guaranteeLabel = makeGuaranteeLabel()
         separator = makeSeparator()
@@ -47,8 +44,6 @@ class UpgradeTab {
         bodyStack.spacing = 0
         bodyStack.addArrangedSubview(headerStrip)
         bodyStack.setCustomSpacing(28, after: headerStrip)
-        bodyStack.addArrangedSubview(usageHero)
-        bodyStack.setCustomSpacing(40, after: usageHero)
         bodyStack.addArrangedSubview(heroButton)
         bodyStack.setCustomSpacing(6, after: heroButton)
         bodyStack.addArrangedSubview(guaranteeLabel)
@@ -211,14 +206,10 @@ class UpgradeTab {
     static func refreshStatus() {
         SettingsWindow.shared?.refreshUpgradeButton()
         guard isInitialized else { return }
-        // `usageHero` is built once in `makeView()` and reused across the app's lifetime.
-        // Re-read `UsageStats` so the displayed trigger / Pro-use numbers track usage
-        // growth instead of staying frozen at first-render.
-        usageHero.refresh()
         let state = LicenseManager.shared.state
         switch state {
         case .pro:
-            setHeroVisible(false)
+            setPurchaseSectionVisible(false)
             featuresList.isHidden = true
             activateLinkRow.isHidden = true
             proManageTable.isHidden = false
@@ -233,19 +224,19 @@ class UpgradeTab {
             }
             statusLabel.attributedStringValue = attributed
         case .trial(let daysRemaining):
-            setHeroVisible(true)
+            setPurchaseSectionVisible(true)
             featuresList.isHidden = false
             activateLinkRow.isHidden = false
             proManageTable.isHidden = true
             statusLabel.attributedStringValue = makeStatusSubtitle(String(format: NSLocalizedString("Trial: %d days remaining", comment: ""), daysRemaining))
         case .proExpired:
-            setHeroVisible(true)
+            setPurchaseSectionVisible(true)
             featuresList.isHidden = false
             activateLinkRow.isHidden = false
             proManageTable.isHidden = true
             statusLabel.attributedStringValue = makeStatusSubtitle(NSLocalizedString("Your license doesn't cover this version. Upgrade to Lifetime Pro.", comment: ""))
         case .trialExpired:
-            setHeroVisible(true)
+            setPurchaseSectionVisible(true)
             featuresList.isHidden = false
             activateLinkRow.isHidden = false
             proManageTable.isHidden = true
@@ -253,8 +244,7 @@ class UpgradeTab {
         }
     }
 
-    private static func setHeroVisible(_ visible: Bool) {
-        usageHero.isHidden = !visible
+    private static func setPurchaseSectionVisible(_ visible: Bool) {
         heroButton.isHidden = !visible
         guaranteeLabel.isHidden = !visible
         separator.isHidden = !visible

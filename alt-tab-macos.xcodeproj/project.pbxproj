@@ -197,12 +197,10 @@
 		5FA002000000000000000018 /* PreferenceDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000018 /* PreferenceDefinition.swift */; };
 		5FA002000000000000000019 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000019 /* LoginItem.swift */; };
 		5FA002000000000000000022 /* ProPromptHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000021 /* ProPromptHeader.swift */; };
-		5FA002000000000000000023 /* UsageStatHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000023 /* UsageStatHeroView.swift */; };
 		5FA002000000000000000024 /* ProGradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000024 /* ProGradientButton.swift */; };
 		5FA004000000000000000003 /* ProTransitionManagerTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000001 /* ProTransitionManagerTestable.swift */; };
 		5FA004000000000000000004 /* ProTransitionManagerTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000001 /* ProTransitionManagerTestable.swift */; };
 		5FA004000000000000000005 /* ProTransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000002 /* ProTransitionTests.swift */; };
-		5FA004000000000000000007 /* UsageStatsMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000006 /* UsageStatsMessageTests.swift */; };
 		5FA1E0B22F50000100A1A1A1 /* PreferencesEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1E0B12F50000100A1A1A1 /* PreferencesEvents.swift */; };
 		5FBB24D32F389A0400BF7E14 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FBB24D22F389A0400BF7E14 /* Benchmark.swift */; };
 		5FBB24E12F389A0400BF7E14 /* MainThreadStall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FBB24E02F389A0400BF7E14 /* MainThreadStall.swift */; };
@@ -217,9 +215,6 @@
 		AA0C8A100000000000000001 /* AXCallScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8A000000000000000001 /* AXCallScheduler.swift */; };
 		AA0C8A1000000000000000B1 /* CGSCallScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8A0000000000000000B1 /* CGSCallScheduler.swift */; };
 		AA0C8A1000000000000000B2 /* ProcessCallScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8A0000000000000000B2 /* ProcessCallScheduler.swift */; };
-		AA0C8B000000000000000001 /* UsageStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8B000000000000000002 /* UsageStats.swift */; };
-		AA0C8B000000000000000003 /* UsageStatsTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8B000000000000000004 /* UsageStatsTestable.swift */; };
-		AA0C8B000000000000000005 /* UsageStatsTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8B000000000000000004 /* UsageStatsTestable.swift */; };
 		AA0C8B000000000000000011 /* MoveToApplicationsFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0C8B000000000000000010 /* MoveToApplicationsFolder.swift */; };
 		AA974BA929B7D84C0099A29E /* PreviewPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA974BA829B7D84C0099A29E /* PreviewPanel.swift */; };
 		AECF000000000000000000A2 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECF000000000000000000A1 /* Endpoints.swift */; };
@@ -626,11 +621,9 @@
 		5FA001000000000000000018 /* PreferenceDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceDefinition.swift; sourceTree = "<group>"; };
 		5FA001000000000000000019 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
 		5FA001000000000000000021 /* ProPromptHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPromptHeader.swift; sourceTree = "<group>"; };
-		5FA001000000000000000023 /* UsageStatHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStatHeroView.swift; sourceTree = "<group>"; };
 		5FA001000000000000000024 /* ProGradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProGradientButton.swift; sourceTree = "<group>"; };
 		5FA004000000000000000001 /* ProTransitionManagerTestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProTransitionManagerTestable.swift; sourceTree = "<group>"; };
 		5FA004000000000000000002 /* ProTransitionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProTransitionTests.swift; sourceTree = "<group>"; };
-		5FA004000000000000000006 /* UsageStatsMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsageStatsMessageTests.swift; sourceTree = "<group>"; };
 		5FA1E0B12F50000100A1A1A1 /* PreferencesEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesEvents.swift; sourceTree = "<group>"; };
 		5FAE000A2F13B49800FE6246 /* update_readme_and_website.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = update_readme_and_website.sh; sourceTree = "<group>"; };
 		5FB41C082F9D1EF900ECF3CF /* local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = local.xcconfig; sourceTree = "<group>"; };
@@ -649,8 +642,6 @@
 		AA0C8A000000000000000001 /* AXCallScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AXCallScheduler.swift; sourceTree = "<group>"; };
 		AA0C8A0000000000000000B1 /* CGSCallScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGSCallScheduler.swift; sourceTree = "<group>"; };
 		AA0C8A0000000000000000B2 /* ProcessCallScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessCallScheduler.swift; sourceTree = "<group>"; };
-		AA0C8B000000000000000002 /* UsageStats.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsageStats.swift; sourceTree = "<group>"; };
-		AA0C8B000000000000000004 /* UsageStatsTestable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsageStatsTestable.swift; sourceTree = "<group>"; };
 		AA0C8B000000000000000010 /* MoveToApplicationsFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoveToApplicationsFolder.swift; sourceTree = "<group>"; };
 		AA974BA829B7D84C0099A29E /* PreviewPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewPanel.swift; sourceTree = "<group>"; };
 		AECF000000000000000000A1 /* Endpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
@@ -980,9 +971,6 @@
 				6A7E5D000000000000000200 /* StapledTicketTests.swift */,
 				5EA8E110000000000000F201 /* SchedulingPolicy.swift */,
 				5EA8E110000000000000F211 /* SchedulingPolicyTests.swift */,
-				AA0C8B000000000000000002 /* UsageStats.swift */,
-				AA0C8B000000000000000004 /* UsageStatsTestable.swift */,
-				5FA004000000000000000006 /* UsageStatsMessageTests.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -997,7 +985,6 @@
 				5FA001000000000000000024 /* ProGradientButton.swift */,
 				5FA001000000000000000017 /* ProPromptHost.swift */,
 				5FA001000000000000000021 /* ProPromptHeader.swift */,
-				5FA001000000000000000023 /* UsageStatHeroView.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -2239,8 +2226,6 @@
 				BF0C8CEBBC2E851D16FF4757 /* CustomRecorderControlTests.swift in Sources */,
 				5FA004000000000000000004 /* ProTransitionManagerTestable.swift in Sources */,
 				5FA004000000000000000005 /* ProTransitionTests.swift in Sources */,
-				AA0C8B000000000000000005 /* UsageStatsTestable.swift in Sources */,
-				5FA004000000000000000007 /* UsageStatsMessageTests.swift in Sources */,
 				5F1CE0010000000000000002 /* Clock.swift in Sources */,
 				5F1CE0010000000000000004 /* Keychain.swift in Sources */,
 				5F1CE0010000000000000006 /* LicenseAPI.swift in Sources */,
@@ -2364,7 +2349,6 @@
 				5FA002000000000000000016 /* ProTransitionScheduler.swift in Sources */,
 				5FA002000000000000000017 /* ProPromptHost.swift in Sources */,
 				5FA002000000000000000022 /* ProPromptHeader.swift in Sources */,
-				5FA002000000000000000023 /* UsageStatHeroView.swift in Sources */,
 				5FA002000000000000000018 /* PreferenceDefinition.swift in Sources */,
 				5FA002000000000000000019 /* LoginItem.swift in Sources */,
 				5FA002000000000000000002 /* Day1WelcomeLetterWindow.swift in Sources */,
@@ -2432,9 +2416,7 @@
 				BF0CAC000000000000001001 /* MissionControlOverlay.swift in Sources */,
 				1C96108A0CB2565233FE100B /* TableGroupView.swift in Sources */,
 				1C9618872DD3863A8EFE8414 /* Appearance.swift in Sources */,
-				AA0C8B000000000000000001 /* UsageStats.swift in Sources */,
 				AA0C8B000000000000000011 /* MoveToApplicationsFolder.swift in Sources */,
-				AA0C8B000000000000000003 /* UsageStatsTestable.swift in Sources */,
 				BF0C83578F7292F307E30751 /* PopupButtonLikeSystemSettings.swift in Sources */,
 				5F04852E2F09AC9700235D4A /* WindowCaptureEvents.swift in Sources */,
 				1C961F9CF4F1BEDF04ACAEE0 /* Switch.swift in Sources */,

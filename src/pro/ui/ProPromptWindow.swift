@@ -34,10 +34,10 @@ class ProPromptWindow: NSWindow {
         isReleasedWhenClosed = false
     }
 
-    /// The centred [header / usage hero / Get Pro / dismiss link] column shared by [C] Full Upgrade,
+    /// The centred [header / hero / Get Pro / dismiss link] column shared by [C] Full Upgrade,
     /// [D] Proactive and [G] Final. Only the three spacings differ between them. Installs the result
     /// as `contentView` and shrink-wraps the height.
-    func setHeroContentView(header: ProPromptHeader, hero: UsageStatHeroView, purchase: NSButton,
+    func setHeroContentView(header: ProPromptHeader, hero: NSView, purchase: NSButton,
                             dismiss: NSButton, sidePadding: CGFloat, gap: CGFloat, dismissGap: CGFloat) {
         let container = NSView()
         container.translatesAutoresizingMaskIntoConstraints = false
