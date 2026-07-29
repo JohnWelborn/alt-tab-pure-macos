@@ -175,29 +175,11 @@
 		5F882F382EC3C63400110A9F /* CustomRecorderControlTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0C8DC2A355E29516DD2FAF /* CustomRecorderControlTestable.swift */; };
 		5F906A342F16A18500B99924 /* Screens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F906A332F16A18000B99924 /* Screens.swift */; };
 		5FA002000000000000000001 /* ProTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000001 /* ProTransitionManager.swift */; };
-		5FA002000000000000000002 /* Day1WelcomeLetterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000002 /* Day1WelcomeLetterWindow.swift */; };
-		5FA002000000000000000003 /* Day12HeadsUpPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000003 /* Day12HeadsUpPopover.swift */; };
-		5FA002000000000000000004 /* Day15FullUpgradeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000004 /* Day15FullUpgradeWindow.swift */; };
-		5FA002000000000000000005 /* Day15ProactiveWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000005 /* Day15ProactiveWindow.swift */; };
-		5FA002000000000000000006 /* Day15HardGatePopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000006 /* Day15HardGatePopover.swift */; };
-		5FA002000000000000000007 /* Day21ReminderPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000007 /* Day21ReminderPopover.swift */; };
-		5FA002000000000000000008 /* Day35FinalWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000008 /* Day35FinalWindow.swift */; };
-		5FA002000000000000000009 /* Day4TourPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000009 /* Day4TourPopover.swift */; };
-		5FA002000000000000000010 /* ProFeatureCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000010 /* ProFeatureCopy.swift */; };
 		5FA002000000000000000011 /* ProFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000011 /* ProFeature.swift */; };
-		5FA002000000000000000012 /* ProPromptWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000012 /* ProPromptWindow.swift */; };
-		5FA002000000000000000013 /* ProPromptPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000013 /* ProPromptPopover.swift */; };
-		5FA002000000000000000014 /* ProConversionCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000014 /* ProConversionCopy.swift */; };
 		5FA002000000000000000015 /* ProTransitionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000015 /* ProTransitionState.swift */; };
-		5FA002000000000000000016 /* ProTransitionScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000016 /* ProTransitionScheduler.swift */; };
-		5FA002000000000000000017 /* ProPromptHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000017 /* ProPromptHost.swift */; };
 		5FA002000000000000000018 /* PreferenceDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000018 /* PreferenceDefinition.swift */; };
 		5FA002000000000000000019 /* LoginItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000019 /* LoginItem.swift */; };
-		5FA002000000000000000022 /* ProPromptHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000021 /* ProPromptHeader.swift */; };
 		5FA002000000000000000024 /* ProGradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA001000000000000000024 /* ProGradientButton.swift */; };
-		5FA004000000000000000003 /* ProTransitionManagerTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000001 /* ProTransitionManagerTestable.swift */; };
-		5FA004000000000000000004 /* ProTransitionManagerTestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000001 /* ProTransitionManagerTestable.swift */; };
-		5FA004000000000000000005 /* ProTransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA004000000000000000002 /* ProTransitionTests.swift */; };
 		5FA1E0B22F50000100A1A1A1 /* PreferencesEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA1E0B12F50000100A1A1A1 /* PreferencesEvents.swift */; };
 		5FBB24D32F389A0400BF7E14 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FBB24D22F389A0400BF7E14 /* Benchmark.swift */; };
 		5FBB24E12F389A0400BF7E14 /* MainThreadStall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FBB24E02F389A0400BF7E14 /* MainThreadStall.swift */; };
@@ -582,28 +564,11 @@
 		5F7B6AFB2F3BAB98003E25E8 /* StatusIconsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusIconsView.swift; sourceTree = "<group>"; };
 		5F906A332F16A18000B99924 /* Screens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screens.swift; sourceTree = "<group>"; };
 		5FA001000000000000000001 /* ProTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProTransitionManager.swift; sourceTree = "<group>"; };
-		5FA001000000000000000002 /* Day1WelcomeLetterWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day1WelcomeLetterWindow.swift; sourceTree = "<group>"; };
-		5FA001000000000000000003 /* Day12HeadsUpPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day12HeadsUpPopover.swift; sourceTree = "<group>"; };
-		5FA001000000000000000004 /* Day15FullUpgradeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day15FullUpgradeWindow.swift; sourceTree = "<group>"; };
-		5FA001000000000000000005 /* Day15ProactiveWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day15ProactiveWindow.swift; sourceTree = "<group>"; };
-		5FA001000000000000000006 /* Day15HardGatePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day15HardGatePopover.swift; sourceTree = "<group>"; };
-		5FA001000000000000000007 /* Day21ReminderPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day21ReminderPopover.swift; sourceTree = "<group>"; };
-		5FA001000000000000000008 /* Day35FinalWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day35FinalWindow.swift; sourceTree = "<group>"; };
-		5FA001000000000000000009 /* Day4TourPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day4TourPopover.swift; sourceTree = "<group>"; };
-		5FA001000000000000000010 /* ProFeatureCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProFeatureCopy.swift; sourceTree = "<group>"; };
 		5FA001000000000000000011 /* ProFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProFeature.swift; sourceTree = "<group>"; };
-		5FA001000000000000000012 /* ProPromptWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPromptWindow.swift; sourceTree = "<group>"; };
-		5FA001000000000000000013 /* ProPromptPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPromptPopover.swift; sourceTree = "<group>"; };
-		5FA001000000000000000014 /* ProConversionCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProConversionCopy.swift; sourceTree = "<group>"; };
 		5FA001000000000000000015 /* ProTransitionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProTransitionState.swift; sourceTree = "<group>"; };
-		5FA001000000000000000016 /* ProTransitionScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProTransitionScheduler.swift; sourceTree = "<group>"; };
-		5FA001000000000000000017 /* ProPromptHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPromptHost.swift; sourceTree = "<group>"; };
 		5FA001000000000000000018 /* PreferenceDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceDefinition.swift; sourceTree = "<group>"; };
 		5FA001000000000000000019 /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
-		5FA001000000000000000021 /* ProPromptHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProPromptHeader.swift; sourceTree = "<group>"; };
 		5FA001000000000000000024 /* ProGradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProGradientButton.swift; sourceTree = "<group>"; };
-		5FA004000000000000000001 /* ProTransitionManagerTestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProTransitionManagerTestable.swift; sourceTree = "<group>"; };
-		5FA004000000000000000002 /* ProTransitionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProTransitionTests.swift; sourceTree = "<group>"; };
 		5FA1E0B12F50000100A1A1A1 /* PreferencesEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesEvents.swift; sourceTree = "<group>"; };
 		5FAE000A2F13B49800FE6246 /* update_readme_and_website.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = update_readme_and_website.sh; sourceTree = "<group>"; };
 		5FB41C082F9D1EF900ECF3CF /* local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = local.xcconfig; sourceTree = "<group>"; };
@@ -946,13 +911,9 @@
 		276A49324F1740F1B507EEC5 /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				5FA001000000000000000012 /* ProPromptWindow.swift */,
-				5FA001000000000000000013 /* ProPromptPopover.swift */,
 				5F0A63072F82D97C00AE4C3A /* ProBadgeView.swift */,
 				25966EE691FC6871588D796B /* ProBadgeViewSegmentTests.swift */,
 				5FA001000000000000000024 /* ProGradientButton.swift */,
-				5FA001000000000000000017 /* ProPromptHost.swift */,
-				5FA001000000000000000021 /* ProPromptHeader.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -1291,8 +1252,6 @@
 			isa = PBXGroup;
 			children = (
 				5FA001000000000000000011 /* ProFeature.swift */,
-				5FA001000000000000000010 /* ProFeatureCopy.swift */,
-				5FA001000000000000000014 /* ProConversionCopy.swift */,
 				5B4341A610A084615576D930 /* license */,
 				276A49324F1740F1B507EEC5 /* ui */,
 				D0B1167FE5CECB486C55B924 /* scheduling */,
@@ -1841,18 +1800,7 @@
 			isa = PBXGroup;
 			children = (
 				5FA001000000000000000001 /* ProTransitionManager.swift */,
-				5FA004000000000000000001 /* ProTransitionManagerTestable.swift */,
-				5FA004000000000000000002 /* ProTransitionTests.swift */,
 				5FA001000000000000000015 /* ProTransitionState.swift */,
-				5FA001000000000000000016 /* ProTransitionScheduler.swift */,
-				5FA001000000000000000002 /* Day1WelcomeLetterWindow.swift */,
-				5FA001000000000000000009 /* Day4TourPopover.swift */,
-				5FA001000000000000000003 /* Day12HeadsUpPopover.swift */,
-				5FA001000000000000000004 /* Day15FullUpgradeWindow.swift */,
-				5FA001000000000000000005 /* Day15ProactiveWindow.swift */,
-				5FA001000000000000000006 /* Day15HardGatePopover.swift */,
-				5FA001000000000000000007 /* Day21ReminderPopover.swift */,
-				5FA001000000000000000008 /* Day35FinalWindow.swift */,
 			);
 			path = scheduling;
 			sourceTree = "<group>";
@@ -2163,8 +2111,6 @@
 				BF0C84E5AC1D423625ABF3E6 /* Mocks.swift in Sources */,
 				BF0C8F9B8014AD21E68B1349 /* HelperExtensionsTestable.swift in Sources */,
 				BF0C8CEBBC2E851D16FF4757 /* CustomRecorderControlTests.swift in Sources */,
-				5FA004000000000000000004 /* ProTransitionManagerTestable.swift in Sources */,
-				5FA004000000000000000005 /* ProTransitionTests.swift in Sources */,
 				5F1CE0010000000000000002 /* Clock.swift in Sources */,
 				5F1CE0010000000000000004 /* Keychain.swift in Sources */,
 				5F1CE0010000000000000006 /* LicenseAPI.swift in Sources */,
@@ -2274,26 +2220,10 @@
 				5F0A63052F82D97C00AE4C38 /* RemoteLicenseClient.swift in Sources */,
 				5F1CE001000000000000000D /* MachineFingerprint.swift in Sources */,
 				5FA002000000000000000001 /* ProTransitionManager.swift in Sources */,
-				5FA004000000000000000003 /* ProTransitionManagerTestable.swift in Sources */,
 				5FA002000000000000000011 /* ProFeature.swift in Sources */,
-				5FA002000000000000000012 /* ProPromptWindow.swift in Sources */,
-				5FA002000000000000000013 /* ProPromptPopover.swift in Sources */,
-				5FA002000000000000000014 /* ProConversionCopy.swift in Sources */,
 				5FA002000000000000000015 /* ProTransitionState.swift in Sources */,
-				5FA002000000000000000016 /* ProTransitionScheduler.swift in Sources */,
-				5FA002000000000000000017 /* ProPromptHost.swift in Sources */,
-				5FA002000000000000000022 /* ProPromptHeader.swift in Sources */,
 				5FA002000000000000000018 /* PreferenceDefinition.swift in Sources */,
 				5FA002000000000000000019 /* LoginItem.swift in Sources */,
-				5FA002000000000000000002 /* Day1WelcomeLetterWindow.swift in Sources */,
-				5FA002000000000000000009 /* Day4TourPopover.swift in Sources */,
-				5FA002000000000000000003 /* Day12HeadsUpPopover.swift in Sources */,
-				5FA002000000000000000004 /* Day15FullUpgradeWindow.swift in Sources */,
-				5FA002000000000000000005 /* Day15ProactiveWindow.swift in Sources */,
-				5FA002000000000000000006 /* Day15HardGatePopover.swift in Sources */,
-				5FA002000000000000000007 /* Day21ReminderPopover.swift in Sources */,
-				5FA002000000000000000008 /* Day35FinalWindow.swift in Sources */,
-				5FA002000000000000000010 /* ProFeatureCopy.swift in Sources */,
 				D04BA1637E125D38546C26E2 /* StackView.swift in Sources */,
 				5F0A63062F82D97C00AE4C39 /* ProBadgeView.swift in Sources */,
 				5FA002000000000000000024 /* ProGradientButton.swift in Sources */,

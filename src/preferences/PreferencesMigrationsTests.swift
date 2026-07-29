@@ -349,7 +349,7 @@ extension App {
 }
 
 enum ProTransitionState {
-    static func markFreshInstallIfUnknown(_ value: Bool) {}
+    static func removeLegacyPromptState() {}
 }
 
 // Preferences encoding surface used by the migrations

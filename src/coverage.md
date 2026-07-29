@@ -35,7 +35,6 @@ unit-tested (Humble Object pattern), so it doesn't appear here; that's by design
 | 93% (109/117) | `src/switcher/ATShortcut.swift` |
 | 96% (48/50) | `src/switcher/state/WindowOrderResolver.swift` |
 | 98% (391/397) | `src/switcher/SearchTestable.swift` |
-| 100% (108/108) | `src/pro/scheduling/ProTransitionManagerTestable.swift` |
 | 100% (40/40) | `src/switcher/state/ExceptionMatcher.swift` |
 | 100% (48/48) | `src/switcher/state/SearchModeResolver.swift` |
 | 100% (50/50) | `src/switcher/state/WindowFilterResolver.swift` |
