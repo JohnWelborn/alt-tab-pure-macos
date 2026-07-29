@@ -3,7 +3,6 @@ import Cocoa
 class GeneralTab {
     static var menubarIconDropdown: NSPopUpButton?
     static var menuIconShownToggle: Switch?
-    static var crashPolicyDropdown: NSPopUpButton?
 
     static func initTab() -> NSView {
         let startAtLogin = TableGroupView.Row(leftTitle: NSLocalizedString("Start at login", comment: ""),
@@ -17,9 +16,6 @@ class GeneralTab {
             ])
         let language = TableGroupView.Row(leftTitle: NSLocalizedString("Language", comment: ""),
             rightViews: [LabelAndControl.makeDropdown("language", LanguagePreference.allCases, extraAction: setLanguageCallback)])
-        crashPolicyDropdown = LabelAndControl.makeDropdown("crashPolicy", CrashPolicyPreference.allCases)
-        let crashPolicy = TableGroupView.Row(leftTitle: NSLocalizedString("Crash reports policy", comment: ""),
-            rightViews: [crashPolicyDropdown!])
         for i in 0..<MenubarIconPreference.allCases.count {
             let image = NSImage.initCopy("menubar-\(i)")
             image.isTemplate = i < 2
@@ -39,7 +35,6 @@ class GeneralTab {
         table.addRow(captureWindowsInBackground)
         table.addNewTable()
         table.addRow(language)
-        table.addRow(crashPolicy)
         let exportButton = NSButton(title: NSLocalizedString("Export settings…", comment: ""), target: nil, action: nil)
         exportButton.onAction = { _ in exportSettings() }
         let importButton = NSButton(title: NSLocalizedString("Import settings…", comment: ""), target: nil, action: nil)
@@ -56,13 +51,11 @@ class GeneralTab {
     static func cleanup() {
         menubarIconDropdown = nil
         menuIconShownToggle = nil
-        crashPolicyDropdown = nil
     }
 
     static func refreshControlsFromPreferences() {
         menubarIconDropdown?.selectItem(at: CachedUserDefaults.intFromMacroPref("menubarIcon", MenubarIconPreference.allCases))
         menubarIconDropdown?.isEnabled = Preferences.menubarIconShown
-        crashPolicyDropdown?.selectItem(at: CachedUserDefaults.intFromMacroPref("crashPolicy", CrashPolicyPreference.allCases))
     }
 
     @objc static func resetPreferences() {

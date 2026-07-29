@@ -33,8 +33,6 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>LSUIElement</key>
 	<string>true</string>
-	<key>NSPrincipalClass</key>
-	<string>AppCenterApplication</string>
 	<key>NSSupportsAutomaticTermination</key>
 	<string>false</string>
 	<key>NSSupportsSuddenTermination</key>
@@ -57,13 +55,7 @@
 		</dict>
 	</array>
 
-	<!-- ===== AppCenter (crash reporter — read by AppCenterApplication superclass at init) ===== -->
-	<key>AppCenterApplicationForwarderEnabled</key>
-	<string>0</string>
-
 	<!-- ===== Build-time secrets (substituted from xcconfig; override per-dev via config/local.xcconfig) ===== -->
-	<key>AppCenterSecret</key>
-	<string>$(APPCENTER_SECRET)</string>
 	<key>Domain</key>
 	<string>$(DOMAIN)</string>
 	<key>ApiDomain</key>
