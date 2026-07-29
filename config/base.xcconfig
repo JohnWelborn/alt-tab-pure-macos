@@ -1,7 +1,7 @@
 // docs: https://help.apple.com/xcode/mac/11.4/#/itcaec37c2a6
 
-PRODUCT_NAME = AltTab
-PRODUCT_BUNDLE_IDENTIFIER = com.lwouis.alt-tab-macos
+PRODUCT_NAME = AltTabPure
+PRODUCT_BUNDLE_IDENTIFIER = com.jwelborn.alt-tab-macos
 MACOSX_DEPLOYMENT_TARGET = 10.13
 SWIFT_VERSION = 5.8 // xcode 14.2 translates this to 5.0; xcode 16.2 as 5.8
 SWIFT_TREAT_WARNINGS_AS_ERRORS = YES
@@ -17,5 +17,3 @@ CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES
 SWIFT_OBJC_BRIDGING_HEADER = alt-tab-macos-Bridging-Header.h
 CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES
 DEAD_CODE_STRIPPING = YES
-DOMAIN = alt-tab.app
-API_DOMAIN = alt-tab.app/api

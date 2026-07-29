@@ -17,5 +17,5 @@ COPY_PHASE_STRIP = YES
 STRIP_INSTALLED_PRODUCT = YES
 STRIP_STYLE = all
 
-// Per-developer overrides (CODE_SIGN_IDENTITY, DOMAIN, API_DOMAIN, …).
+// Per-developer overrides (CODE_SIGN_IDENTITY, …).
 #include? "local.xcconfig"
