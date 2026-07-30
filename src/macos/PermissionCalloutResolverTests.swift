@@ -11,8 +11,8 @@ import XCTest
 ///     / previews / both)?
 ///   - `shouldShowCallout` — given the permission state and the affected features, show?
 ///
-/// Production wires these to real state: `screenRecordingGranted` is `ScreenRecordingPermission.status
-/// == .granted` (so both `.skipped` and `.notGranted` map to `false`), and `dependentFeatures` is
+/// Production wires these to real state: `screenRecordingGranted` and `screenRecordingSkipped` come from
+/// `ScreenRecordingPermission.status`, and `dependentFeatures` is
 /// `Preferences.screenRecordingDependentFeatures`, which OR-s each feature flag over every shortcut
 /// slot — so a per-shortcut override that enables Thumbnails/Preview on any one slot flips it on.
 /// The shown copy reuses the existing "Thumbnails" translation; only the subject of the sentence varies.
@@ -50,37 +50,41 @@ final class PermissionCalloutResolverTests: XCTestCase {
     /// Permission granted → never show, even if features use Screen Recording (they work fine).
     func testGrantedNeverShowsEvenWhenUsed() {
         XCTAssertFalse(PermissionCalloutResolver.shouldShowCallout(
-            screenRecordingGranted: true, dependentFeatures: .both))
+            screenRecordingGranted: true, screenRecordingSkipped: false, dependentFeatures: .both))
     }
 
     /// Permission granted and nothing uses it → still never show.
     func testGrantedNeverShowsWhenUnused() {
         XCTAssertFalse(PermissionCalloutResolver.shouldShowCallout(
-            screenRecordingGranted: true, dependentFeatures: .none))
+            screenRecordingGranted: true, screenRecordingSkipped: false, dependentFeatures: .none))
     }
 
-    /// Permission missing (skipped or never granted) and Thumbnails is used → SHOW (names Thumbnails).
-    func testMissingPermissionShowsForThumbnails() {
+    /// Permission not granted and Thumbnails is used → SHOW (names Thumbnails).
+    func testNotGrantedShowsForThumbnails() {
         XCTAssertTrue(PermissionCalloutResolver.shouldShowCallout(
-            screenRecordingGranted: false, dependentFeatures: .thumbnails))
+            screenRecordingGranted: false, screenRecordingSkipped: false, dependentFeatures: .thumbnails))
     }
 
     /// Permission missing and only Preview is used → SHOW (names Window previews).
     func testMissingPermissionShowsForPreviews() {
         XCTAssertTrue(PermissionCalloutResolver.shouldShowCallout(
-            screenRecordingGranted: false, dependentFeatures: .previews))
+            screenRecordingGranted: false, screenRecordingSkipped: false, dependentFeatures: .previews))
     }
 
     /// Permission missing and both features are used → SHOW (names both).
     func testMissingPermissionShowsForBoth() {
         XCTAssertTrue(PermissionCalloutResolver.shouldShowCallout(
-            screenRecordingGranted: false, dependentFeatures: .both))
+            screenRecordingGranted: false, screenRecordingSkipped: false, dependentFeatures: .both))
     }
 
-    /// Permission missing but no feature uses it → HIDE. The user skipped the permission and uses
-    /// neither Thumbnails nor Preview, so nagging them is pointless (the regression #5623 fixes).
-    func testMissingPermissionHiddenWhenUnused() {
+    /// Permission not granted but no feature uses it → HIDE.
+    func testNotGrantedHiddenWhenUnused() {
         XCTAssertFalse(PermissionCalloutResolver.shouldShowCallout(
-            screenRecordingGranted: false, dependentFeatures: .none))
+            screenRecordingGranted: false, screenRecordingSkipped: false, dependentFeatures: .none))
+    }
+
+    func testSkippedNeverShowsEvenWhenUsed() {
+        XCTAssertFalse(PermissionCalloutResolver.shouldShowCallout(
+            screenRecordingGranted: false, screenRecordingSkipped: true, dependentFeatures: .both))
     }
 }
