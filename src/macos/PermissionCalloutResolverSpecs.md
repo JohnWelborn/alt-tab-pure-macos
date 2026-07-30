@@ -6,7 +6,7 @@
 
 The menubar shows a callout — "AltTab is running without Screen Recording permissions. _X_ won't
 show." — with a "Grant permission" button. It used to appear for **every** user missing the
-permission, including users who deliberately skipped it and don't use any feature that needs it
+permission, including users who deliberately skipped it
 (reported in [#5623](https://github.com/lwouis/alt-tab-macos/issues/5623)), and it always blamed
 "Thumbnails" even when the user relied on window previews instead.
 
@@ -16,17 +16,16 @@ kernel deciding when the callout is worth showing and which feature(s) it names,
 
 - `dependentFeatures(usesThumbnails:usesPreviews:)` — classify the two independent "used by any
   shortcut" flags into the affected feature set: `.none`, `.thumbnails`, `.previews`, or `.both`.
-- `shouldShowCallout(screenRecordingGranted:dependentFeatures:)` — given the permission state and the
-  affected features, show the callout? (missing permission AND not `.none`.)
+- `shouldShowCallout(screenRecordingGranted:screenRecordingSkipped:dependentFeatures:)` — given the permission state and the
+  affected features, show the callout? (not granted, not skipped, and not `.none`.)
 
 ## Behavior & edge cases
 
-- **The two inputs are independent dimensions.** The callout shows only at their intersection:
-  permission missing **and** at least one feature depends on Screen Recording. The combinations where
-  the permission is granted, or where `dependentFeatures` is `.none`, all hide it.
-- **`screenRecordingGranted` collapses three permission states into two.** Production passes
-  `ScreenRecordingPermission.status == .granted`, so both `.skipped` (user opted out) and
-  `.notGranted` (never granted) map to `false` → "permission missing". They behave identically.
+- **The two inputs are independent dimensions.** The callout shows only when permission is
+  `.notGranted` and at least one feature depends on Screen Recording. `.granted`, `.skipped`, and
+  `dependentFeatures == .none` all hide it.
+- **Skipping is an explicit dismissal.** The Permissions window writes the skip preference, which
+  produces `.skipped`; the app continues with its non-screen-recording fallbacks and does not nag.
 - **`dependentFeatures` is an OR of each flag across all shortcut slots.** Production computes it as
   `Preferences.screenRecordingDependentFeatures`, which OR-s the Thumbnails flag and the Preview flag
   independently over every shortcut (`0...maxShortcutCount`) using the *effective* per-shortcut
@@ -51,7 +50,8 @@ Mirrors `PermissionCalloutResolverTests.swift` 1:1.
 ### When the callout shows vs. stays hidden
 - **testGrantedNeverShowsEvenWhenUsed** — permission granted + `.both` → hide (it works, no need to nag).
 - **testGrantedNeverShowsWhenUnused** — permission granted + `.none` → hide.
-- **testMissingPermissionShowsForThumbnails** — permission missing + `.thumbnails` → **show** (names Thumbnails).
-- **testMissingPermissionShowsForPreviews** — permission missing + `.previews` → **show** (names Window previews).
-- **testMissingPermissionShowsForBoth** — permission missing + `.both` → **show** (names both).
-- **testMissingPermissionHiddenWhenUnused** — permission missing + `.none` → hide (the #5623 fix).
+- **testNotGrantedShowsForThumbnails** — not granted + `.thumbnails` → **show** (names Thumbnails).
+- **testNotGrantedShowsForPreviews** — not granted + `.previews` → **show** (names Window previews).
+- **testNotGrantedShowsForBoth** — not granted + `.both` → **show** (names both).
+- **testNotGrantedHiddenWhenUnused** — not granted + `.none` → hide.
+- **testSkippedNeverShowsEvenWhenUsed** — skipped + `.both` → hide.

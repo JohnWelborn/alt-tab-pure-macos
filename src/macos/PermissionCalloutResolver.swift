@@ -8,10 +8,9 @@ import Foundation
 ///
 /// Screen Recording is consumed by exactly two features: the Thumbnails appearance style (window
 /// screenshots) and the "preview selected window" overlay. So the callout is only worth showing to a
-/// user who lacks the permission AND has at least one shortcut configured to use one of them — and
+/// user who has not explicitly skipped the permission AND has at least one shortcut configured to use one of them — and
 /// its copy names whichever of the two are actually affected, so it never promises back a feature the
-/// user doesn't use. A user who skipped the permission but uses neither gains nothing by granting it,
-/// so we don't nag them.
+/// user doesn't use. Choosing to use the app without this permission suppresses the callout.
 enum PermissionCalloutResolver {
     /// The Screen-Recording-dependent feature(s) the user's settings rely on, aggregated across all
     /// shortcuts. Drives both whether the callout shows (`.none` → never) and which message it shows.
@@ -40,13 +39,13 @@ enum PermissionCalloutResolver {
     }
 
     /// Whether the menubar permission callout should be shown.
-    /// - `screenRecordingGranted`: the OS permission is granted. When `true` the callout is pointless
-    ///   and is never shown, regardless of settings. When `false` the permission is missing — whether
-    ///   the user actively skipped it or simply never granted it (both map to `false` here).
+    /// - `screenRecordingGranted`: a granted OS permission needs no callout.
+    /// - `screenRecordingSkipped`: an explicit choice to use the app without the permission also
+    ///   suppresses the callout.
     /// - `dependentFeatures`: which features the user's settings rely on (the OR across all shortcuts).
     ///   `.none` means no shortcut needs the permission, so the callout is suppressed even though the
     ///   permission is missing — the user gains nothing by granting it.
-    static func shouldShowCallout(screenRecordingGranted: Bool, dependentFeatures: DependentFeatures) -> Bool {
-        !screenRecordingGranted && dependentFeatures != .none
+    static func shouldShowCallout(screenRecordingGranted: Bool, screenRecordingSkipped: Bool, dependentFeatures: DependentFeatures) -> Bool {
+        !screenRecordingGranted && !screenRecordingSkipped && dependentFeatures != .none
     }
 }

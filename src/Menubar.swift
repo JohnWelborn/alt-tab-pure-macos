@@ -80,6 +80,7 @@ class Menubar {
         let dependentFeatures = Preferences.screenRecordingDependentFeatures
         let show = PermissionCalloutResolver.shouldShowCallout(
             screenRecordingGranted: ScreenRecordingPermission.status == .granted,
+            screenRecordingSkipped: ScreenRecordingPermission.status == .skipped,
             dependentFeatures: dependentFeatures)
         if show { permissionCallout?.update(dependentFeatures) }
         togglePermissionCallout(show)
