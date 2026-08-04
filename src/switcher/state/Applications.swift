@@ -134,7 +134,11 @@ class Applications {
     /// ambiguous — see below), and tab children.
     /// Used for genuinely-new windows only (discovery + discoverWindow). Uses the "generic" bucket so a real
     /// focus event (in the "focus" bucket) is never clobbered.
-    static func addDiscoveredWindow(_ element: AXUIElement, _ raw: WsRawWindow, _ app: Application) {
+    /// `knownInactiveTab`: true only when called from `discoverInactiveTabs` — this window was found
+    /// specifically because it matched an untracked AXTabGroup title, so an empty CGS Space query is trusted
+    /// evidence it's a background tab, not the transient "brand-new window, CGS hasn't indexed it yet"
+    /// ambiguity that makes ordinary discovery keep the current-Space default (see below).
+    static func addDiscoveredWindow(_ element: AXUIElement, _ raw: WsRawWindow, _ app: Application, knownInactiveTab: Bool = false) {
         let wid = raw.wid
         AXCallScheduler.shared.schedule(key: "wid-\(wid)-generic", context: app.debugId, pid: app.pid, scan: true) { [weak app] in
             guard let app else { return }
@@ -171,11 +175,18 @@ class Applications {
                     // override Window.init's current-Space default with the real Space resolved above (new
                     // windows only; existing ones stay live via events / syncSpacesState).
                     if findOrCreate.1 {
-                        if wasRemovedFromSpaceWhileUntracked {
-                            // It got a removed-from-Space event while still untracked → it's a background tab.
-                            // Force it Space-less: the per-window CGS query still reports its OLD Space here
-                            // (stale right after backgrounding), so trusting that would keep it looking like a
-                            // separate on-screen window; the empty is what lets geometry group it (#5830).
+                        if wasRemovedFromSpaceWhileUntracked || (knownInactiveTab && spaceIds.isEmpty) {
+                            // Either it got a removed-from-Space event while still untracked (a background tab
+                            // whose per-window CGS query still reports its OLD Space, stale right after
+                            // backgrounding — #5830), or it's a brute-force-discovered inactive tab whose fresh
+                            // query legitimately came back empty. Force it Space-less immediately in both cases:
+                            // leaving it at Window.init's current-Space default would let it render as a normal,
+                            // wrongly-selectable standalone tile until some LATER pass (syncSpacesState, only
+                            // triggered by the switcher actually being shown) happens to correct it — which can
+                            // be arbitrarily far in the future if the user's first summon comes long after this
+                            // window was discovered. Setting it Space-less here makes `recomputeIsPhantom()`
+                            // (called inside `applySpacesAndScreen`) hide it synchronously, with no timing
+                            // dependency at all.
                             window.applySpacesAndScreen([wid: []])
                         } else if !spaceIds.isEmpty {
                             window.applySpacesAndScreen([wid: spaceIds])
@@ -300,7 +311,7 @@ class Applications {
                         continue
                     }
                     Logger.info { "discovered inactive tab via brute-force: wid:\(wid) '\(title)'" }
-                    addDiscoveredWindow(element, raw, app)
+                    addDiscoveredWindow(element, raw, app, knownInactiveTab: true)
                 }
             }
         }
