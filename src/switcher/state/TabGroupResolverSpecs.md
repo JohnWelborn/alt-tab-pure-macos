@@ -34,8 +34,16 @@ Two independent signals locate tabs, used at different times:
   Space and ≥ 1 sibling is Space-less. Minimized / size-less windows are excluded. A separate real window
   is never Space-less, so two visible same-size windows are **not** collapsed. The visible tab must be
   fullscreen or already AX-confirmed tabbed (`tabbedSiblingWids != nil`) — geometry re-links and covers
-  fullscreen, but never fabricates a group from unconfirmed same-size windows (#5830). Output sorted by
-  `visibleWid`.
+  fullscreen, but never fabricates a group from unconfirmed same-size windows (#5830). A background
+  candidate counts either by being Space-less **or** by already being `isTabbed` and linked to the visible
+  wid — the second clause is a stability rule (mirrors `matchSiblings`'): a background tab's own spaceIds
+  get backfilled to the visible tab's real Space once grouped, so without this it would silently fall out
+  of the group (and `tabbedSiblingWids` would narrow) the next time a DIFFERENT sibling gets grouped,
+  even though it's still correctly hidden. Never weakens the #5830 guard — an unconfirmed window still has
+  `isTabbed == false`, so it still needs the Space-less check. The "visible" pick itself excludes
+  already-`isTabbed` candidates too: that same backfill means several background tabs can simultaneously
+  carry an identical stale non-empty Space value, and the first one encountered must never be mistaken for
+  the genuinely active tab and wrongly un-hidden. Output sorted by `visibleWid`.
 - **`matchSiblings(active, axTitles, sameAppWindows) -> SiblingMatch`** — resolve the active tab's AXTabGroup
   titles to tracked windows. The active title is removed once (duplicates allowed); each remaining title
   matches the first compatible, not-yet-matched same-app window that is PLAUSIBLY an inactive tab (already
@@ -75,6 +83,14 @@ each test exercises.
 - **testSingleCandidateNoGroup** — one candidate → no group.
 - **testMultipleBackgroundTabsGroupUnderVisible** — one AX-confirmed visible + two Space-less, all same size
   → both backgrounds grouped under the one visible tab.
+- **testAlreadyLinkedBackfilledSiblingStaysInBackground** — a sibling already `isTabbed` + linked to the
+  visible wid, but backfilled to a non-empty (not independently Space-less) spaceIds, stays counted as
+  background when a DIFFERENT, newly Space-less sibling is grouped in the same pass.
+- **testUnlinkedSameSizeOnScreenWindowStillNotGrouped** — the #5830 guard still holds: an on-Space,
+  never-confirmed same-size window (not `isTabbed`, no link) is not swept in by the stability clause.
+- **testVisibleNotConfusedWithStaleBackfilledSibling** — an already-`isTabbed` sibling carrying the same
+  stale non-empty Space value as the true visible tab, appearing first in the input, is not mistaken for
+  visible and wrongly un-hidden.
 
 ### B. matchSiblings
 

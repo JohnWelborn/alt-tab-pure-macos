@@ -86,6 +86,37 @@ final class TabGroupResolverTests: XCTestCase {
             [GeometryGroup(visibleWid: 1, backgroundWids: [2, 3])])
     }
 
+    func testAlreadyLinkedBackfilledSiblingStaysInBackground() {
+        // wid 2 was grouped on an earlier pass: it's isTabbed + linked to 1, but its OWN spaceIds were
+        // backfilled to the visible tab's real Space (no longer independently Space-less). Grouping a
+        // DIFFERENT, newly Space-less sibling (wid 3) must not silently drop wid 2 out of the group.
+        let visible = tw(wid: 1, spaceIds: [1], tabbedSiblingWids: [1, 2])
+        let alreadyLinked = tw(wid: 2, spaceIds: [1], isTabbed: true, tabbedSiblingWids: [1, 2])
+        let newBackground = tw(wid: 3, spaceIds: [])
+        XCTAssertEqual(TabGroupResolver.geometryGroups([visible, alreadyLinked, newBackground]),
+            [GeometryGroup(visibleWid: 1, backgroundWids: [2, 3])])
+    }
+
+    func testUnlinkedSameSizeOnScreenWindowStillNotGrouped() {
+        // The #5830 guard still holds: a same-size window that's on-Space and was NEVER confirmed as part
+        // of this group (isTabbed false, no tabbedSiblingWids link) doesn't qualify via the new clause.
+        let visible = tw(wid: 1, spaceIds: [1], tabbedSiblingWids: [1])
+        let unrelated = tw(wid: 2, spaceIds: [1])
+        XCTAssertEqual(TabGroupResolver.geometryGroups([visible, unrelated]), [])
+    }
+
+    func testVisibleNotConfusedWithStaleBackfilledSibling() {
+        // Two already-tabbed siblings both carry the SAME stale, backfilled non-empty Space value (from
+        // being grouped under an earlier visible tab) alongside the TRUE current visible tab. The stale
+        // one appears FIRST in the input and also reads non-empty — without excluding already-`isTabbed`
+        // candidates from "visible" eligibility, this would wrongly pick it and un-hide it.
+        let staleBackground = tw(wid: 2, spaceIds: [1], isTabbed: true, tabbedSiblingWids: [1, 2, 3])
+        let trueVisible = tw(wid: 1, spaceIds: [1], tabbedSiblingWids: [1, 2, 3])
+        let newBackground = tw(wid: 3, spaceIds: [])
+        XCTAssertEqual(TabGroupResolver.geometryGroups([staleBackground, trueVisible, newBackground]),
+            [GeometryGroup(visibleWid: 1, backgroundWids: [2, 3])])
+    }
+
     // MARK: - B. matchSiblings
 
     func testMatchesInactiveSiblingByTitle() {

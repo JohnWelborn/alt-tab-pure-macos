@@ -69,7 +69,13 @@ enum TabGroupResolver {
         for (_, group) in Dictionary(grouping: candidates, by: { sizeKey($0) }) where group.count > 1 {
             // attach every Space-less tab to ONE visible parent; leave other visible same-size windows
             // out, so genuinely separate windows aren't collapsed (AX refines membership on the review).
-            guard let visible = group.first(where: { !$0.spaceIds.isEmpty }) else { continue }
+            // Excludes already-`isTabbed` candidates: several background tabs can simultaneously carry the
+            // same STALE, backfilled non-empty Space value (each was stamped with whichever tab was visible
+            // the last time IT was grouped) — without this, the first one encountered could be mistaken for
+            // "visible" and wrongly un-hidden (`isTabbed = false`), even though it's still actually hidden.
+            // An already-confirmed background tab is never a valid "visible" candidate regardless of its
+            // (possibly stale) spaceIds.
+            guard let visible = group.first(where: { !$0.spaceIds.isEmpty && !$0.isTabbed }) else { continue }
             // Only geometry-group behind a visible tab AX already confirmed (`tabbedSiblingWids != nil`), OR a
             // fullscreen visible window (whose tabs AX can't read). Geometry alone is not enough to CREATE a
             // group: separate windows of one app routinely share a default size (every Terminal window is the
@@ -81,7 +87,19 @@ enum TabGroupResolver {
             // Space-less (a separate fullscreen window holds its own fullscreen Space; a normal window isn't
             // fullscreen-sized).
             guard visible.isFullscreen || visible.tabbedSiblingWids != nil else { continue }
-            let background = group.filter { $0.spaceIds.isEmpty }
+            // A background tab's OWN spaceIds get backfilled to the visible tab's real Space once it's
+            // grouped (needed elsewhere — e.g. isOnScreen), so on the NEXT pass (grouping a different,
+            // newly Space-less sibling) it no longer independently reads as Space-less and would otherwise
+            // silently fall out of `background` here — narrowing `tabbedSiblingWids` over time even though
+            // it's still correctly `isTabbed`. Keep it counted as background if it's already confirmed part
+            // of THIS group (linked to `visible`'s wid), mirroring `matchSiblings`' stability rule (#5830):
+            // only explicit dissolution should ever shrink a group, never a side effect of re-grouping a
+            // sibling. A genuinely separate, never-confirmed window still has `isTabbed == false`, so it
+            // still needs the `spaceIds.isEmpty` check — this can't reintroduce #5830.
+            let background = group.filter {
+                $0.wid != visible.wid &&
+                ($0.spaceIds.isEmpty || ($0.isTabbed && $0.tabbedSiblingWids?.contains(visible.wid) == true))
+            }
             guard !background.isEmpty else { continue }
             groups.append(GeometryGroup(visibleWid: visible.wid, backgroundWids: background.map { $0.wid }))
         }
