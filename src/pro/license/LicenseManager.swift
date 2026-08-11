@@ -174,6 +174,9 @@ class LicenseManager {
     }
 
     func computeState() -> LicenseState {
+        #if FREE_BUILD
+        return .pro
+        #else
         if keychain.value(account: Self.keychainKeyAccount) != nil {
             let lastValidationResult = defaults.bool(forKey: "lastValidationResult")
             guard lastValidationResult else { return .trialExpired }
@@ -187,6 +190,7 @@ class LicenseManager {
             return .pro
         }
         return computeTrialState()
+        #endif
     }
 
     private func computeTrialState() -> LicenseState {
@@ -200,10 +204,14 @@ class LicenseManager {
     }
 
     func scheduleAsyncRevalidationIfNeeded() {
+        #if FREE_BUILD
+        return
+        #else
         let lastValidation = defaults.double(forKey: "lastValidation")
         let elapsed = clock.now.timeIntervalSince1970 - lastValidation
         guard elapsed >= Self.revalidationInterval else { return }
         revalidateWithServer()
+        #endif
     }
 
     func revalidateWithServer() {
