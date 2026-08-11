@@ -530,7 +530,11 @@ class SettingsWindow: NSWindow {
     }
 
     @objc private func upgradeButtonClicked() {
+        #if FREE_BUILD
+        return
+        #else
         showUpgradeView()
+        #endif
     }
 
     private func setupQuitButton(_ parent: NSView) {

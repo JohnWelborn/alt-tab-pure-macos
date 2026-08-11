@@ -92,7 +92,11 @@ class Menubar {
         case .pro:
             toggleUpgradeMenuItem(false)
             supportProjectMenuItem.isHidden = true
+            #if FREE_BUILD
+            myAccountMenuItem.isHidden = true
+            #else
             myAccountMenuItem.isHidden = false
+            #endif
         case .proExpired:
             toggleUpgradeMenuItem(true)
             supportProjectMenuItem.isHidden = false
