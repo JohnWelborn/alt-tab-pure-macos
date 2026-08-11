@@ -3,6 +3,7 @@
 #include "base.xcconfig"
 
 CODE_SIGN_IDENTITY = Developer ID Application: Louis Pontoise (QXD7GW8FHY)
+#include "free-build.xcconfig"
 CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO // for notarization
 OTHER_CODE_SIGN_FLAGS = --timestamp --deep --options runtime // for notarization
 SWIFT_COMPILATION_MODE = wholemodule
