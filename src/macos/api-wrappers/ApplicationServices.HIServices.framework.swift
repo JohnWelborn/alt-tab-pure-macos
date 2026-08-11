@@ -1,3 +1,6 @@
+import Cocoa
+import ApplicationServices
+
 /// for some reason, this attribute is missing from ApplicationServices.HIServices.AXUIElement
 /// returns the CGWindowID of the provided AXUIElement
 /// * macOS 10.10+

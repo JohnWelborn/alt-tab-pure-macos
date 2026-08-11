@@ -1,3 +1,6 @@
+import Cocoa
+import ApplicationServices
+
 class WindowDiscriminator {
     static func isActualWindow(_ app: Application, _ wid: CGWindowID, _ level: CGWindowLevel, _ title: String?, _ subrole: String?, _ role: String?, _ size: CGSize?) -> Bool {
         // Some non-windows have title: nil (e.g. some OS elements)
