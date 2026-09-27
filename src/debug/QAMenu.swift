@@ -99,7 +99,6 @@ final class QAMenu: NSPanel {
         stack.addArrangedSubview(graphCheckbox)
         stack.addArrangedSubview(langDropdown)
         addCorruptedSettingsButtons()
-        addSearchHintButton()
     }
 
     private func addCorruptedSettingsButtons() {
@@ -139,16 +138,6 @@ final class QAMenu: NSPanel {
         dialogRow.spacing = 4
         corruptedSectionContent.addArrangedSubview(dialogRow)
     }
-
-    private func addSearchHintButton() {
-        if let prior = stack.arrangedSubviews.last {
-            stack.setCustomSpacing(Self.sectionSpacing, after: prior)
-        }
-        let searchHintButton = makeButton("Show search hint") { SearchDiscoveryHint.shared.showForQA() }
-        searchHintButton.toolTip = "Show once on the next Alt-Tab. Hold Alt for one second."
-        stack.addArrangedSubview(searchHintButton)
-    }
-
 
     private func sectionLabel(_ text: String) -> NSTextField {
         let label = NSTextField(labelWithString: text)

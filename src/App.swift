@@ -210,7 +210,6 @@ class App: NSApplication {
     }
 
     static func cycleSelection(_ direction: Direction, allowWrap: Bool = true) {
-        SwitcherSession.current?.searchDiscovery.lastNavigationAt = ProcessInfo.processInfo.systemUptime
         (TilesView.scrollView?.documentView as? TilesDocumentView)?.cancelDraggingTimer()
         CursorEvents.resetDeadzone()
         if direction == .up || direction == .down {
@@ -302,7 +301,6 @@ class App: NSApplication {
                 Windows.endStartupOrderSeeding()
                 isVeryFirstSummon = false
             }
-            if !session.isFirstSummon { SearchDiscoveryHint.shared.cancel() }
             session.isFirstSummon = false
             session.shortcutIndex = shortcutIndex
             // Hide instantly so the rebuild for a different shortcut (Appearance change, layout
@@ -465,7 +463,6 @@ class App: NSApplication {
         if QAMenu.openSettingsOnLaunch { App.showSettingsWindow() }
         if QAMenu.graphEnabled { DebugMenu.setEnabled(true) }
         #endif
-        SearchDiscoveryHint.shared.initialize()
         Logger.info { "Finished launching AltTab" }
     }
 }

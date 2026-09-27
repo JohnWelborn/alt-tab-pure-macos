@@ -58,7 +58,6 @@ class PreferencesEvents {
             }
             return
         }
-        SearchDiscoveryHint.shared.cancel()
         ControlsTab.preferenceChanged(key)
         switch key {
         case "menubarIcon", "menubarIconShown": applyMenubarPreferencesIfReady()

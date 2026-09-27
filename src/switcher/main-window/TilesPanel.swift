@@ -2,11 +2,6 @@ import Cocoa
 
 class TilesPanel: NSPanel {
     override var canBecomeKey: Bool { true }
-    override func accessibilityChildren() -> [Any]? {
-        let children = super.accessibilityChildren() ?? []
-        guard let hint = SearchDiscoveryHint.shared.accessibilityGroup else { return children }
-        return children + [hint]
-    }
     static var maxPossibleThumbnailSize = NSSize.zero
     static var maxPossibleAppIconSize = NSSize.zero
     static var shared: TilesPanel!
@@ -44,7 +39,6 @@ class TilesPanel: NSPanel {
         }
         // prevent further AppKit work
         TilesView.clearNeedsLayout()
-        SearchDiscoveryHint.shared.refreshAfterVisibleWork()
     }
 
 
@@ -71,7 +65,6 @@ class TilesPanel: NSPanel {
 
     override func orderOut(_ sender: Any?) {
         MainThreadStall.step()
-        SearchDiscoveryHint.shared.cancel()
         TilesView.clearNeedsLayout()
         if Preferences.fadeOutAnimation {
             NSAnimationContext.runAnimationGroup(
@@ -105,7 +98,6 @@ class TilesPanel: NSPanel {
         ContextMenuEvents.toggle(true)
         CursorEvents.toggle(true)
         DispatchQueue.main.async { TilesView.scrollView.flashScrollers() }
-        SearchDiscoveryHint.shared.switcherShown()
     }
 
     static func maxThumbnailsWidth(_ screen: NSScreen = NSScreen.preferred) -> CGFloat {
